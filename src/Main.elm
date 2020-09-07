@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (Color(..), Row(..), main, mkFeedback)
 
 import Array exposing (..)
 import Browser
@@ -145,14 +145,11 @@ updateRowColor guesses rowIndex string colIndex =
             ( hint, updateRow row rowIndex Nothing )
 
 
-type Board
-    = Board Row Row Row Row Row Row Row
-
-
 type Hint
     = CorrectColorPosition
     | CorrectColor
     | Empty
+
 
 
 showHint hint =
@@ -201,23 +198,7 @@ type Msg
     | Cheat
 
 
-mkFeedback (Row a b c d) (Row e f g h) =
-    let
-        score x y =
-            case ( x == y, List.member x [ e, f, g, h ] ) of
-                ( True, _ ) ->
-                    CorrectColorPosition
-
-                ( False, True ) ->
-                    CorrectColor
-
-                _ ->
-                    Empty
-    in
-    Feedback (score a e) (score b f) (score c g) (score d h)
-
-
-mkFeedback4 actual expected =
+mkFeedback actual expected =
     let
         get i =
             Array.get i list |> Maybe.withDefault Empty
@@ -347,7 +328,7 @@ update msg model =
                         |> Maybe.withDefault ( initFeedback, blankRow )
 
                 feedback =
-                    mkFeedback4 row model.pick
+                    mkFeedback row model.pick
 
                 newGuesses =
                     Array.set index ( feedback, row ) model.guesses
