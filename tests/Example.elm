@@ -11,14 +11,33 @@ suite : Test
 suite =
     describe "Feedback"
         [ describe "mkFeedback"
-            -- Nest as many descriptions as you like.
             [ test " all the same" <|
                 \_ ->
                     let
+                        guess =
+                            Main.Row (Just Red) (Just Red) (Just Red) (Just Red)
+
+                        pick =
+                            Main.Row (Just Red) (Just Red) (Just Red) (Just Red)
+
                         actual =
-                            mkFeedback
-                                (Main.Row (Just Red) (Just Red) (Just Red) (Just Red))
-                                (Main.Row (Just Red) (Just Red) (Just Red) (Just Red))
+                            mkFeedback guess pick
+
+                        expected =
+                            Feedback CorrectColorPosition CorrectColorPosition CorrectColorPosition CorrectColorPosition
+                    in
+                    Expect.equal expected actual
+            , test "one of each color" <|
+                \_ ->
+                    let
+                        pick =
+                            Main.Row (Just Green) (Just Red) (Just Blue) (Just Yellow)
+
+                        guess =
+                            Main.Row (Just Green) (Just Red) (Just Blue) (Just Yellow)
+
+                        actual =
+                            mkFeedback guess pick
 
                         expected =
                             Feedback CorrectColorPosition CorrectColorPosition CorrectColorPosition CorrectColorPosition
