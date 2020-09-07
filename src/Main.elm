@@ -2,10 +2,9 @@ module Main exposing (main)
 
 import Array exposing (..)
 import Browser
-import Html exposing (Html, button, div, table, tbody, td, text, thead, tr)
+import Html exposing (Html, button, div, table, tbody, td, text, tr)
 import Html.Attributes exposing (attribute)
-import Html.Events exposing (on, onClick, onInput)
-import Json.Decode as Decode
+import Html.Events exposing (onClick, onInput)
 import Maybe exposing (..)
 import Random
 import String
