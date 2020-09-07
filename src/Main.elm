@@ -1,11 +1,11 @@
-module Main exposing (Color(..), Row(..), main, mkFeedback)
+module Main exposing (Color(..), Feedback(..), Hint(..), Row(..), main, mkFeedback)
 
-import Array exposing (..)
+import Array exposing (Array(..), fromList)
 import Browser
 import Html exposing (Html, button, div, table, tbody, td, text, tr)
 import Html.Attributes exposing (attribute)
 import Html.Events exposing (onClick, onInput)
-import Maybe exposing (..)
+import Maybe exposing (Maybe(..))
 import Random
 import String
 
@@ -149,7 +149,6 @@ type Hint
     = CorrectColorPosition
     | CorrectColor
     | Empty
-
 
 
 showHint hint =
