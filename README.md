@@ -14,3 +14,9 @@ elm make --debug src/Main.elm --output build/main.js
 elm reactor
 ```
 
+## Test
+
+```sh
+elm-test
+```
+
