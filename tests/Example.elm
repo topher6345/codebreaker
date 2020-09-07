@@ -9,9 +9,9 @@ import Test exposing (..)
 
 suite : Test
 suite =
-    describe "Feedback"
-        [ describe "mkFeedback"
-            [ test " all the same" <|
+    describe "mkFeedback"
+        [ describe "win cases"
+            [ test "all the same color" <|
                 \_ ->
                     let
                         guess =
