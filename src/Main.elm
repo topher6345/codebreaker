@@ -1,4 +1,4 @@
-module Main exposing (Color(..), Feedback(..), Hint(..), Row(..), main, mkFeedback)
+module Main exposing (Color(..), Either(..), Feedback(..), Hint(..), HintTable, Row(..), main, mkFeedback, zipRow)
 
 import Array exposing (Array(..), fromList)
 import Browser
@@ -197,6 +197,13 @@ type Msg
     | Cheat
 
 
+type alias HintTable =
+    { correctColorPosition : Int
+    , correctColor : Int
+    , empty : Int
+    }
+
+
 mkFeedback actual expected =
     let
         get i =
@@ -260,28 +267,6 @@ type Either a b
 
 transpose rows =
     ( List.map Tuple.first rows, List.map Tuple.second rows )
-
-
-score56 rows =
-    let
-        isEqual ( a, b ) =
-            a == b
-
-        correctColorPositionCount =
-            count isEqual rows
-
-        unmatchedPegs =
-            List.filter isEqual rows
-
-        biff a =
-            case a of
-                Right x ->
-                    Right x
-
-                Left b ->
-                    Left b
-    in
-    []
 
 
 detectCorrectColor (Row a b c d) (Row e f g h) =
