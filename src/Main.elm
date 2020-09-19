@@ -27,71 +27,67 @@ type Color
     | Yellow
     | Pink
     | White
+    | None
 
 
 colorShow color =
     case color of
-        Just Red ->
+        Red ->
             "\u{1F7E5}"
 
-        Just Blue ->
+        Blue ->
             "\u{1F7E6}"
 
-        Just Green ->
+        Green ->
             "\u{1F7E9}"
 
-        Just Yellow ->
+        Yellow ->
             "\u{1F7E8}"
 
-        Just Pink ->
+        Pink ->
             "\u{1F7EA}"
 
-        Just White ->
+        White ->
             "⬜️"
 
-        Nothing ->
+        None ->
             ""
 
 
 mkColor string =
     case string of
         "\u{1F7E5}" ->
-            Just Red
+            Red
 
         "\u{1F7E6}" ->
-            Just Blue
+            Blue
 
         "\u{1F7E9}" ->
-            Just Green
+            Green
 
         "\u{1F7E8}" ->
-            Just Yellow
+            Yellow
 
         "\u{1F7EA}" ->
-            Just Pink
+            Pink
 
         "⬜️" ->
-            Just White
+            White
 
         _ ->
-            Nothing
+            None
 
 
 type Row
-    = Row (Maybe Color) (Maybe Color) (Maybe Color) (Maybe Color)
+    = Row Color Color Color Color
 
 
 blankRow =
-    Row Nothing Nothing Nothing Nothing
+    Row None None None None
 
 
-nonEmptyRow row =
-    case row of
-        Row (Just _) (Just _) (Just _) (Just _) ->
-            True
-
-        _ ->
-            False
+nonEmptyRow (Row a b c d) =
+    List.all ((/=) None) [ a, b, c, d ]
 
 
 type RowIndex
@@ -138,11 +134,11 @@ updateRowColor guesses rowIndex string colIndex =
                 |> Maybe.withDefault ( initFeedback, blankRow )
     in
     case mkColor string of
-        Just color ->
-            ( hint, updateRow row rowIndex (Just color) )
+        None ->
+            ( hint, updateRow row rowIndex None )
 
-        Nothing ->
-            ( hint, updateRow row rowIndex Nothing )
+        color ->
+            ( hint, updateRow row rowIndex color )
 
 
 type Hint
@@ -420,7 +416,7 @@ mkSubmitRows guesses currentRound =
 view : Model -> Html Msg
 view model =
     div []
-        [ Html.h1 [] [ text "Mastermind" ]
+        [ Html.h1 [] [ text "Guessing Game" ]
         , Html.p [] [ text model.flash ]
         , table []
             [ tbody []
@@ -514,7 +510,7 @@ roll =
 
 
 pickToRow (Pick a b c d) =
-    Row (Just a) (Just b) (Just c) (Just d)
+    Row a b c d
 
 
 main : Program () Model Msg
