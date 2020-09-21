@@ -1,10 +1,11 @@
-module Main exposing (Color(..), Either(..), Feedback(..), Hint(..), HintTable, Row(..), main, mkFeedback, zipRow)
+module Main exposing (Color(..), Either(..), Feedback, Hint(..), Row(..), detectCorrectPosition, main, mkFeedback, zipRow)
 
 import Array exposing (Array(..), fromList)
 import Browser
 import Html exposing (Html, button, div, table, tbody, td, text, tr)
 import Html.Attributes exposing (attribute)
 import Html.Events exposing (onClick, onInput)
+import List.Extra
 import Maybe exposing (Maybe(..))
 import Random
 import String
@@ -147,6 +148,7 @@ type Hint
     | Empty
 
 
+showHint : Hint -> String
 showHint hint =
     case hint of
         CorrectColorPosition ->
@@ -159,18 +161,22 @@ showHint hint =
             "☐"
 
 
-type Feedback
-    = Feedback Hint Hint Hint Hint
+type alias Feedback =
+    { correctColorPosition : Int
+    , correctColor : Int
+    , empty : Int
+    }
 
 
+initFeedback : Feedback
 initFeedback =
-    Feedback Empty Empty Empty Empty
+    { correctColorPosition = 0
+    , correctColor = 0
+    , empty = 4
+    }
 
 
-win =
-    Feedback CorrectColorPosition CorrectColorPosition CorrectColorPosition CorrectColorPosition
-
-
+initGuesses : Array ( Feedback, Row )
 initGuesses =
     Array.repeat 8 ( initFeedback, blankRow )
 
@@ -193,56 +199,47 @@ type Msg
     | Cheat
 
 
-type alias HintTable =
-    { correctColorPosition : Int
-    , correctColor : Int
-    , empty : Int
+mkFeedback : Row -> Row -> Feedback
+mkFeedback actual expected =
+    let
+        ( corrects, list ) =
+            detectCorrectPosition actual expected
+
+        ( a, b ) =
+            transpose list
+
+        colorCount =
+            detectCorrectColor a b 0
+    in
+    { correctColorPosition = corrects
+    , correctColor = colorCount
+    , empty = 4 - corrects - colorCount
     }
 
 
-mkFeedback actual expected =
+detectCorrectPosition : Row -> Row -> ( Int, List ( Color, Color ) )
+detectCorrectPosition actual expected =
     let
-        get i =
-            Array.get i list |> Maybe.withDefault Empty
+        zipped =
+            zipRow actual expected
 
-        list =
-            Array.fromList (detectCorrectPosition actual expected ++ detectCorrectColor actual expected)
+        equal ( a, b ) =
+            a == b
 
-        a =
-            get 0
-
-        b =
-            get 1
-
-        c =
-            get 2
-
-        d =
-            get 3
+        notEqual ( a, b ) =
+            a /= b
     in
-    Feedback a b c d
+    ( count equal zipped
+    , List.filter notEqual zipped
+    )
 
 
-detectCorrectPosition : Row -> Row -> List Hint
-detectCorrectPosition (Row a b c d) (Row e f g h) =
-    let
-        list =
-            [ a == e, b == f, c == g, d == h ]
-
-        fmap x =
-            if x then
-                Just CorrectColorPosition
-
-            else
-                Nothing
-    in
-    List.filterMap fmap list
-
-
+zipRow : Row -> Row -> List ( Color, Color )
 zipRow (Row a b c d) (Row e f g h) =
     [ ( a, e ), ( b, f ), ( c, g ), ( d, h ) ]
 
 
+count : (a -> Bool) -> List a -> Int
 count predicate list =
     List.foldr
         (\a b ->
@@ -261,27 +258,26 @@ type Either a b
     | Right b
 
 
+transpose : List ( Color, Color ) -> ( List Color, List Color )
 transpose rows =
     ( List.map Tuple.first rows, List.map Tuple.second rows )
 
 
-detectCorrectColor (Row a b c d) (Row e f g h) =
-    let
-        list =
-            [ List.member a [ f, g, h ]
-            , List.member b [ e, g, d ]
-            , List.member c [ e, f, h ]
-            , List.member d [ e, f, g ]
-            ]
-
-        fmap x =
-            if x then
-                Just CorrectColor
+detectCorrectColor : List Color -> List Color -> Int -> Int
+detectCorrectColor expected actual counter =
+    case expected of
+        expectedHead :: expectedTail ->
+            if List.member expectedHead actual then
+                detectCorrectColor
+                    (List.Extra.remove expectedHead expected)
+                    (List.Extra.remove expectedHead actual)
+                    (counter + 1)
 
             else
-                Nothing
-    in
-    List.filterMap fmap list
+                detectCorrectColor expectedTail actual counter
+
+        [] ->
+            counter
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -316,7 +312,7 @@ update msg model =
                 currentRound =
                     model.currentRound + 1
             in
-            case ( feedback == win, currentRound > 8 ) of
+            case ( feedback.correctColorPosition == 4, currentRound > 8 ) of
                 ( True, False ) ->
                     ( { model | flash = "You win!", currentRound = currentRound, guesses = newGuesses }, Cmd.none )
 
@@ -358,16 +354,39 @@ choice guesses rowIndex disabled colIndex =
         ]
 
 
-hintTable (Feedback a b c d) =
+hintTable feedback =
+    let
+        correct =
+            List.repeat feedback.correctColorPosition CorrectColorPosition
+
+        color =
+            List.repeat feedback.correctColor CorrectColor
+
+        empties =
+            List.repeat feedback.empty Empty
+
+        values =
+            List.concat [ correct, color, empties ]
+
+        length =
+            List.length values
+
+        array =
+            if length < 4 then
+                Array.fromList (values ++ List.repeat (4 - length) Empty)
+
+            else
+                Array.fromList values
+    in
     [ table []
         [ tbody []
             [ tr []
-                [ td [] [ text <| showHint a ]
-                , td [] [ text <| showHint b ]
+                [ td [] [ Array.get 0 array |> Maybe.withDefault Empty |> showHint |> text ]
+                , td [] [ Array.get 1 array |> Maybe.withDefault Empty |> showHint |> text ]
                 ]
             , tr []
-                [ td [] [ text <| showHint c ]
-                , td [] [ text <| showHint d ]
+                [ td [] [ Array.get 2 array |> Maybe.withDefault Empty |> showHint |> text ]
+                , td [] [ Array.get 3 array |> Maybe.withDefault Empty |> showHint |> text ]
                 ]
             ]
         ]
