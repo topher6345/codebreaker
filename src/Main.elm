@@ -1,4 +1,4 @@
-module Main exposing (Color(..), Either(..), Feedback(..), Hint(..), HintTable, Row(..), main, mkFeedback, zipRow)
+module Main exposing (Color(..), Either(..), HintTable, Row(..), main, mkFeedback, zipRow)
 
 import Array exposing (Array(..), fromList)
 import Browser
@@ -141,34 +141,36 @@ updateRowColor guesses rowIndex string colIndex =
             ( hint, updateRow row rowIndex color )
 
 
-type Hint
-    = CorrectColorPosition
-    | CorrectColor
-    | Empty
+type alias Hint =
+    { correctColorPosition : Int
+    , correctColor : Int
+    , empty : Int
+    }
 
 
-showHint hint =
-    case hint of
-        CorrectColorPosition ->
-            "◾️"
 
-        CorrectColor ->
-            "◽️"
+--showHint hint =
+--    case hint of
+--        CorrectColorPosition ->
+--            "◾️"
+--        CorrectColor ->
+--            "◽️"
+--        Empty ->
+--            "☐"
 
-        Empty ->
-            "☐"
 
-
-type Feedback
-    = Feedback Hint Hint Hint Hint
+type alias Feedback =
+    { correctColorPosition : Int
+    , correctColor : Int
+    , empty : Int
+    }
 
 
 initFeedback =
-    Feedback Empty Empty Empty Empty
-
-
-win =
-    Feedback CorrectColorPosition CorrectColorPosition CorrectColorPosition CorrectColorPosition
+    { correctColorPosition = 0
+    , correctColor = 0
+    , empty = 4
+    }
 
 
 initGuesses =
@@ -201,42 +203,12 @@ type alias HintTable =
 
 
 mkFeedback actual expected =
-    let
-        get i =
-            Array.get i list |> Maybe.withDefault Empty
-
-        list =
-            Array.fromList (detectCorrectPosition actual expected ++ detectCorrectColor actual expected)
-
-        a =
-            get 0
-
-        b =
-            get 1
-
-        c =
-            get 2
-
-        d =
-            get 3
-    in
-    Feedback a b c d
+    initFeedback
 
 
 detectCorrectPosition : Row -> Row -> List Hint
 detectCorrectPosition (Row a b c d) (Row e f g h) =
-    let
-        list =
-            [ a == e, b == f, c == g, d == h ]
-
-        fmap x =
-            if x then
-                Just CorrectColorPosition
-
-            else
-                Nothing
-    in
-    List.filterMap fmap list
+    Debug.todo "unimplemented"
 
 
 zipRow (Row a b c d) (Row e f g h) =
@@ -266,22 +238,7 @@ transpose rows =
 
 
 detectCorrectColor (Row a b c d) (Row e f g h) =
-    let
-        list =
-            [ List.member a [ f, g, h ]
-            , List.member b [ e, g, d ]
-            , List.member c [ e, f, h ]
-            , List.member d [ e, f, g ]
-            ]
-
-        fmap x =
-            if x then
-                Just CorrectColor
-
-            else
-                Nothing
-    in
-    List.filterMap fmap list
+    Debug.todo
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -316,7 +273,7 @@ update msg model =
                 currentRound =
                     model.currentRound + 1
             in
-            case ( feedback == win, currentRound > 8 ) of
+            case ( feedback.correctColorPosition == 4, currentRound > 8 ) of
                 ( True, False ) ->
                     ( { model | flash = "You win!", currentRound = currentRound, guesses = newGuesses }, Cmd.none )
 
@@ -358,16 +315,16 @@ choice guesses rowIndex disabled colIndex =
         ]
 
 
-hintTable (Feedback a b c d) =
+hintTable feedback =
     [ table []
         [ tbody []
             [ tr []
-                [ td [] [ text <| showHint a ]
-                , td [] [ text <| showHint b ]
+                [ td [] [ text <| Debug.todo "unimplemented" ]
+                , td [] [ text <| Debug.todo "unimplemented" ]
                 ]
             , tr []
-                [ td [] [ text <| showHint c ]
-                , td [] [ text <| showHint d ]
+                [ td [] [ text <| Debug.todo "unimplemented" ]
+                , td [] [ text <| Debug.todo "unimplemented" ]
                 ]
             ]
         ]
