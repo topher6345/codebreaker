@@ -6,11 +6,4 @@ if [ ! -d build ]; then
   mkdir build
 fi
 
-elm make src/Main.elm --output build/main.js
-
-if [ -f build/index.html ]; then
-  rm build/index.html
-fi
-cp index.html build/index.html
-
-gh-pages -d .
+elm make src/Main.elm --optimize --output build/main.js && gh-pages -d .

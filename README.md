@@ -19,3 +19,8 @@ elm reactor
 ```sh
 elm-test
 ```
+
+## Deploy
+```sh
+elm make src/Main.elm --optimize --output build/main.js && gh-pages -d .
+```
