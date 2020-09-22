@@ -105,16 +105,16 @@ type RowIndex
 updateRow : Row -> RowIndex -> Color -> Row
 updateRow row rowIndex color =
     case ( rowIndex, row ) of
-        ( First, Row a b c d ) ->
+        ( First, Row _ b c d ) ->
             Row color b c d
 
-        ( Second, Row a b c d ) ->
+        ( Second, Row a _ c d ) ->
             Row a color c d
 
-        ( Third, Row a b c d ) ->
+        ( Third, Row a b _ d ) ->
             Row a b color d
 
-        ( Fourth, Row a b c d ) ->
+        ( Fourth, Row a b c _ ) ->
             Row a b c color
 
 
