@@ -284,11 +284,24 @@ type Msg
     | Roll Pick
     | Submit
     | Cheat
+    | NewGame
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        NewGame ->
+            ( { model
+                | currentRound = 0
+                , row = blankRow
+                , pick = pickToRow (Pick Red Red Red Red)
+                , guesses = initGuesses
+                , flash = ""
+                , reveal = False
+              }
+            , Random.generate Roll roll
+            )
+
         UpdateColor rowIndex colIndex string ->
             ( { model
                 | guesses = Array.set colIndex (updateRowColor model.guesses rowIndex string colIndex) model.guesses
@@ -503,6 +516,11 @@ view model =
                            ]
                 ]
             ]
+        , if model == initialModel then
+            button [ attribute "disabled" "true" ] [ text "new Game" ]
+
+          else
+            button [ onClick NewGame ] [ text "New Game" ]
         ]
 
 
