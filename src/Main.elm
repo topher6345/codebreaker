@@ -516,7 +516,7 @@ view model =
                            ]
                 ]
             ]
-        , if model == initialModel then
+        , if model.guesses == initialModel.guesses then
             button [ attribute "disabled" "true" ] [ text "new Game" ]
 
           else
