@@ -11,24 +11,6 @@ import Random
 import String
 
 
-type alias Guess =
-    ( Feedback, Row )
-
-
-initGuess =
-    ( initFeedback, blankRow )
-
-
-type alias Model =
-    { currentRound : Int
-    , row : Row
-    , guesses : Array Guess
-    , pick : Row
-    , reveal : Bool
-    , flash : String
-    }
-
-
 type Color
     = Red
     | Blue
@@ -142,17 +124,6 @@ getFromRow row rowIndex =
             d
 
 
-updateRowColor : Array Guess -> RowIndex -> String -> Int -> Guess
-updateRowColor guesses rowIndex string colIndex =
-    let
-        ( feedback, row ) =
-            guesses
-                |> Array.get colIndex
-                |> Maybe.withDefault initGuess
-    in
-    ( feedback, updateRow row rowIndex (mkColor string) )
-
-
 type Hint
     = CorrectColorPosition
     | CorrectColor
@@ -184,22 +155,6 @@ initFeedback =
     { correctColorPosition = 0
     , correctColor = 0
     , empty = 4
-    }
-
-
-initGuesses : Array Guess
-initGuesses =
-    Array.repeat 8 initGuess
-
-
-initialModel : Model
-initialModel =
-    { currentRound = 0
-    , row = blankRow
-    , pick = Row Red Red Red Red
-    , guesses = initGuesses
-    , flash = "Welcome to Codebreaker!"
-    , reveal = False
     }
 
 
@@ -276,6 +231,52 @@ detectCorrectColor expected actual counter =
 
         [] ->
             counter
+
+
+type alias Guess =
+    ( Feedback, Row )
+
+
+initGuess : Guess
+initGuess =
+    ( initFeedback, blankRow )
+
+
+initGuesses : Array Guess
+initGuesses =
+    Array.repeat 8 initGuess
+
+
+updateRowColor : Array Guess -> RowIndex -> String -> Int -> Guess
+updateRowColor guesses rowIndex string colIndex =
+    let
+        ( feedback, row ) =
+            guesses
+                |> Array.get colIndex
+                |> Maybe.withDefault initGuess
+    in
+    ( feedback, updateRow row rowIndex (mkColor string) )
+
+
+type alias Model =
+    { currentRound : Int
+    , row : Row
+    , guesses : Array Guess
+    , pick : Row
+    , reveal : Bool
+    , flash : String
+    }
+
+
+initialModel : Model
+initialModel =
+    { currentRound = 0
+    , row = blankRow
+    , pick = Row Red Red Red Red
+    , guesses = initGuesses
+    , flash = "Welcome to Codebreaker!"
+    , reveal = False
+    }
 
 
 type Msg
@@ -371,6 +372,7 @@ choice guesses rowIndex disabled colIndex =
         ]
 
 
+hintTableList : Feedback -> List Hint
 hintTableList { correctColorPosition, correctColor, empty } =
     let
         correct =
