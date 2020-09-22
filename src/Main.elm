@@ -196,7 +196,7 @@ initialModel : Model
 initialModel =
     { currentRound = 0
     , row = blankRow
-    , pick = pickToRow (Pick Red Red Red Red)
+    , pick = Row Red Red Red Red
     , guesses = initGuesses
     , flash = ""
     , reveal = False
@@ -281,7 +281,7 @@ detectCorrectColor expected actual counter =
 
 type Msg
     = UpdateColor RowIndex Int String
-    | Roll Pick
+    | Roll Row
     | Submit
     | Cheat
     | NewGame
@@ -294,7 +294,7 @@ update msg model =
             ( { model
                 | currentRound = 0
                 , row = blankRow
-                , pick = pickToRow (Pick Red Red Red Red)
+                , pick = Row Red Red Red Red
                 , guesses = initGuesses
                 , flash = ""
                 , reveal = False
@@ -310,7 +310,7 @@ update msg model =
             )
 
         Roll pick ->
-            ( { model | pick = pickToRow pick }, Cmd.none )
+            ( { model | pick = pick }, Cmd.none )
 
         Submit ->
             let
@@ -545,18 +545,9 @@ randColor =
     Random.uniform Red [ Green, Blue, Yellow, Pink, White ]
 
 
-type Pick
-    = Pick Color Color Color Color
-
-
-roll : Random.Generator Pick
+roll : Random.Generator Row
 roll =
-    Random.map4 Pick randColor randColor randColor randColor
-
-
-pickToRow : Pick -> Row
-pickToRow (Pick a b c d) =
-    Row a b c d
+    Random.map4 Row randColor randColor randColor randColor
 
 
 main : Program () Model Msg
