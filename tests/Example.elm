@@ -1,9 +1,7 @@
 module Example exposing (suite)
 
-import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
-import Main exposing (Color(..), Feedback, Hint(..), Row(..), mkFeedback)
-import Maybe exposing (..)
+import Expect
+import Main exposing (Color(..), Hint(..), Row(..), detectCorrectPosition, mkFeedback)
 import Test exposing (..)
 
 
@@ -80,7 +78,7 @@ suite =
                             Main.Row Red Red Red Red
 
                         actual =
-                            Main.detectCorrectPosition guess pick
+                            detectCorrectPosition guess pick
 
                         expected =
                             ( 4, [] )
