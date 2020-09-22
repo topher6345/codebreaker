@@ -145,12 +145,7 @@ updateRowColor guesses rowIndex string colIndex =
             Array.get colIndex guesses
                 |> Maybe.withDefault ( initFeedback, blankRow )
     in
-    case mkColor string of
-        None ->
-            ( feedback, updateRow row rowIndex None )
-
-        color ->
-            ( feedback, updateRow row rowIndex color )
+    ( feedback, updateRow row rowIndex (mkColor string) )
 
 
 type Hint
