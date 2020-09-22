@@ -368,8 +368,7 @@ choice guesses rowIndex disabled colIndex =
         ]
 
 
-hintTable : Feedback -> List (Html Msg)
-hintTable { correctColorPosition, correctColor, empty } =
+hintTableList { correctColorPosition, correctColor, empty } =
     let
         correct =
             List.repeat correctColorPosition CorrectColorPosition
@@ -385,27 +384,31 @@ hintTable { correctColorPosition, correctColor, empty } =
 
         length =
             List.length values
+    in
+    if length < 4 then
+        values ++ List.repeat (4 - length) Empty
 
-        list =
-            if length < 4 then
-                values ++ List.repeat (4 - length) Empty
+    else
+        values
 
-            else
-                values
 
+hintTable : Feedback -> List (Html Msg)
+hintTable feedback =
+    let
         array =
-            Array.fromList list
+            Array.fromList hintTableList feedback
+
+        mkText index =
+            array
+                |> Array.get index
+                |> Maybe.withDefault Empty
+                |> showHint
+                |> text
     in
     [ table []
         [ tbody []
-            [ tr []
-                [ td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 0 array ]
-                , td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 1 array ]
-                ]
-            , tr []
-                [ td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 2 array ]
-                , td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 3 array ]
-                ]
+            [ tr [] [ td [] [ mkText 0 ], td [] [ mkText 1 ] ]
+            , tr [] [ td [] [ mkText 2 ], td [] [ mkText 3 ] ]
             ]
         ]
     ]
@@ -415,7 +418,8 @@ submitable : Array Guess -> Int -> Int -> List (Html.Attribute Msg)
 submitable guesses index colIndex =
     let
         ( _, row ) =
-            Array.get index guesses
+            guesses
+                |> Array.get index
                 |> Maybe.withDefault ( initFeedback, blankRow )
     in
     if nonEmptyRow row && index == colIndex then
@@ -437,7 +441,13 @@ mkHintTable index guesses =
 
 hintsTr : Array Guess -> Html Msg
 hintsTr guesses =
-    tr [] (List.range 0 7 |> List.map (\i -> td [] <| mkHintTable i guesses))
+    let
+        mkTd index =
+            guesses
+                |> mkHintTable index
+                |> td []
+    in
+    tr [] (List.range 0 7 |> List.map mkTd)
 
 
 guessesTds : RowIndex -> Int -> Array Guess -> List (Html Msg)
@@ -446,13 +456,19 @@ guessesTds rowIndex currentRound guesses =
         mkTd index =
             td [] [ choice guesses rowIndex (currentRound /= index) index ]
     in
-    List.range 0 7
-        |> List.map mkTd
+    List.range 0 7 |> List.map mkTd
 
 
 mkSubmitRows : Array Guess -> Int -> List (Html Msg)
 mkSubmitRows guesses currentRound =
-    List.range 0 7 |> List.map (\i -> td [] [ button (submitable guesses currentRound i) [ text <| String.fromInt (i + 1) ] ])
+    let
+        mkTd index =
+            td []
+                [ button (submitable guesses currentRound index)
+                    [ String.fromInt (index + 1) |> text ]
+                ]
+    in
+    List.range 0 7 |> List.map mkTd
 
 
 view : Model -> Html Msg
