@@ -198,7 +198,7 @@ initialModel =
     , row = blankRow
     , pick = Row Red Red Red Red
     , guesses = initGuesses
-    , flash = ""
+    , flash = "Welcome to Codebreaker!"
     , reveal = False
     }
 
@@ -296,7 +296,7 @@ update msg model =
                 , row = blankRow
                 , pick = Row Red Red Red Red
                 , guesses = initGuesses
-                , flash = ""
+                , flash = "Welcome to Codebreaker!"
                 , reveal = False
               }
             , Random.generate Roll roll
@@ -464,7 +464,7 @@ mkSubmitRows guesses currentRound =
 view : Model -> Html Msg
 view model =
     div []
-        [ Html.h1 [] [ text "Guessing Game" ]
+        [ Html.h1 [] [ text "Codebreaker" ]
         , Html.p [] [ text model.flash ]
         , table []
             [ tbody []
