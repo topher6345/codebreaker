@@ -219,15 +219,12 @@ transpose rows =
 detectCorrectColor : List Color -> List Color -> Int -> Int
 detectCorrectColor expected actual counter =
     case expected of
-        expectedHead :: expectedTail ->
-            if List.member expectedHead actual then
-                detectCorrectColor
-                    (List.Extra.remove expectedHead expected)
-                    (List.Extra.remove expectedHead actual)
-                    (counter + 1)
+        head :: tail ->
+            if List.member head actual then
+                detectCorrectColor (List.Extra.remove head expected) (List.Extra.remove head actual) (counter + 1)
 
             else
-                detectCorrectColor expectedTail actual counter
+                detectCorrectColor tail actual counter
 
         [] ->
             counter
