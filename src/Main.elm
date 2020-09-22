@@ -240,16 +240,15 @@ zipRow (Row a b c d) (Row e f g h) =
 
 count : (a -> Bool) -> List a -> Int
 count predicate list =
-    List.foldr
-        (\a b ->
-            if predicate a then
-                b + 1
+    let
+        apply elem int =
+            if predicate elem then
+                int + 1
 
             else
-                b
-        )
-        0
-        list
+                int
+    in
+    List.foldr apply 0 list
 
 
 transpose : List ( Color, Color ) -> ( List Color, List Color )
