@@ -1,6 +1,6 @@
 module Main exposing (Color(..), Either(..), Feedback, Hint(..), Row(..), detectCorrectPosition, main, mkFeedback, zipRow)
 
-import Array exposing (Array(..), fromList)
+import Array exposing (Array(..))
 import Browser
 import Html exposing (Html, button, div, table, tbody, td, text, tr)
 import Html.Attributes exposing (attribute)
@@ -31,6 +31,7 @@ type Color
     | None
 
 
+colorShow : Color -> String
 colorShow color =
     case color of
         Red ->
@@ -55,6 +56,7 @@ colorShow color =
             ""
 
 
+mkColor : String -> Color
 mkColor string =
     case string of
         "\u{1F7E5}" ->
@@ -83,10 +85,12 @@ type Row
     = Row Color Color Color Color
 
 
+blankRow : Row
 blankRow =
     Row None None None None
 
 
+nonEmptyRow : Row -> Bool
 nonEmptyRow (Row a b c d) =
     List.all ((/=) None) [ a, b, c, d ]
 
@@ -98,6 +102,7 @@ type RowIndex
     | Fourth
 
 
+updateRow : Row -> RowIndex -> Color -> Row
 updateRow row rowIndex color =
     case ( rowIndex, row ) of
         ( First, Row a b c d ) ->
@@ -113,6 +118,7 @@ updateRow row rowIndex color =
             Row a b c color
 
 
+getFromRow : Row -> RowIndex -> Color
 getFromRow row rowIndex =
     case ( rowIndex, row ) of
         ( First, Row a _ _ _ ) ->
@@ -128,18 +134,19 @@ getFromRow row rowIndex =
             d
 
 
+updateRowColor : Array ( Feedback, Row ) -> RowIndex -> String -> Int -> ( Feedback, Row )
 updateRowColor guesses rowIndex string colIndex =
     let
-        ( hint, row ) =
+        ( feedback, row ) =
             Array.get colIndex guesses
                 |> Maybe.withDefault ( initFeedback, blankRow )
     in
     case mkColor string of
         None ->
-            ( hint, updateRow row rowIndex None )
+            ( feedback, updateRow row rowIndex None )
 
         color ->
-            ( hint, updateRow row rowIndex color )
+            ( feedback, updateRow row rowIndex color )
 
 
 type Hint
@@ -326,14 +333,15 @@ update msg model =
             ( { model | reveal = True }, Cmd.none )
 
 
+choice : Array ( Feedback, Row ) -> RowIndex -> Bool -> Int -> Html Msg
 choice guesses rowIndex disabled colIndex =
     let
         ( _, row2 ) =
             Array.get colIndex guesses |> Maybe.withDefault ( initFeedback, blankRow )
     in
     Html.select
-        ([ Html.Attributes.value (getFromRow row2 rowIndex |> colorShow) ]
-            ++ (if disabled then
+        (Html.Attributes.value (getFromRow row2 rowIndex |> colorShow)
+            :: (if disabled then
                     [ attribute "disabled" "true" ]
 
                 else
@@ -354,6 +362,7 @@ choice guesses rowIndex disabled colIndex =
         ]
 
 
+hintTable : Feedback -> List (Html Msg)
 hintTable { correctColorPosition, correctColor, empty } =
     let
         correct =
@@ -382,6 +391,7 @@ hintTable { correctColorPosition, correctColor, empty } =
     ]
 
 
+submitable : Array ( Feedback, Row ) -> Int -> Int -> List (Html.Attribute Msg)
 submitable guesses index colIndex =
     let
         ( _, row ) =
@@ -395,6 +405,7 @@ submitable guesses index colIndex =
         [ attribute "disabled" "true" ]
 
 
+mkHintTable : Int -> Array ( Feedback, Row ) -> List (Html Msg)
 mkHintTable index guesses =
     case Array.get index guesses of
         Just ( feedback, _ ) ->
@@ -404,10 +415,12 @@ mkHintTable index guesses =
             []
 
 
+hintsTr : Array ( Feedback, Row ) -> Html Msg
 hintsTr guesses =
     div [] (List.range 0 7 |> List.map (\i -> div [] <| mkHintTable i guesses))
 
 
+guessesTds : RowIndex -> Int -> Array ( Feedback, Row ) -> List (Html Msg)
 guessesTds rowIndex currentRound guesses =
     let
         mkTd index =
@@ -417,6 +430,7 @@ guessesTds rowIndex currentRound guesses =
         |> List.map mkTd
 
 
+mkSubmitRows : Array ( Feedback, Row ) -> Int -> List (Html Msg)
 mkSubmitRows guesses currentRound =
     List.range 0 7 |> List.map (\i -> td [] [ button (submitable guesses currentRound i) [ text <| String.fromInt (i + 1) ] ])
 
@@ -484,7 +498,7 @@ view model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 
@@ -493,14 +507,6 @@ init _ =
     ( initialModel
     , Random.generate Roll roll
     )
-
-
-colors =
-    Array.fromList [ Red, Green, Blue, Yellow, Pink, White ]
-
-
-pickColor index =
-    Array.get index colors |> Maybe.withDefault Red
 
 
 randColor : Random.Generator Color
@@ -517,6 +523,7 @@ roll =
     Random.map4 Pick randColor randColor randColor randColor
 
 
+pickToRow : Pick -> Row
 pickToRow (Pick a b c d) =
     Row a b c d
 
