@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+set -e
+
+if [ ! -d build ]; then
+  mkdir build
+fi
+
+elm make src/Main.elm --output build/main.js
+
+if [ -f build/index.html ]; then
+  rm build/index.html
+fi
+cp index.html build/index.html
+
+gh-pages -d .
