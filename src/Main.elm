@@ -490,7 +490,7 @@ view model =
                     guessesTds First model.currentRound model.guesses
                         ++ [ td []
                                 (if model.reveal then
-                                    [ text <| colorShow <| (\(Row a _ _ _) -> a) model.pick ]
+                                    [ text <| colorShow <| getFromRow model.pick First ]
 
                                  else
                                     []
@@ -500,7 +500,7 @@ view model =
                     guessesTds Second model.currentRound model.guesses
                         ++ [ td []
                                 (if model.reveal then
-                                    [ text <| colorShow <| (\(Row _ b _ _) -> b) model.pick ]
+                                    [ text <| colorShow <| getFromRow model.pick Second ]
 
                                  else
                                     []
@@ -510,7 +510,7 @@ view model =
                     guessesTds Third model.currentRound model.guesses
                         ++ [ td []
                                 (if model.reveal then
-                                    [ text <| colorShow <| (\(Row _ _ c _) -> c) model.pick ]
+                                    [ text <| colorShow <| getFromRow model.pick Third ]
 
                                  else
                                     []
@@ -520,7 +520,7 @@ view model =
                     guessesTds Fourth model.currentRound model.guesses
                         ++ [ td []
                                 (if model.reveal then
-                                    [ text <| colorShow <| (\(Row _ _ _ d) -> d) model.pick ]
+                                    [ text <| colorShow <| getFromRow model.pick Fourth ]
 
                                  else
                                     []
