@@ -15,6 +15,10 @@ type alias Guess =
     ( Feedback, Row )
 
 
+initGuess =
+    ( initFeedback, blankRow )
+
+
 type alias Model =
     { currentRound : Int
     , row : Row
@@ -142,8 +146,9 @@ updateRowColor : Array Guess -> RowIndex -> String -> Int -> Guess
 updateRowColor guesses rowIndex string colIndex =
     let
         ( feedback, row ) =
-            Array.get colIndex guesses
-                |> Maybe.withDefault ( initFeedback, blankRow )
+            guesses
+                |> Array.get colIndex
+                |> Maybe.withDefault initGuess
     in
     ( feedback, updateRow row rowIndex (mkColor string) )
 
@@ -184,7 +189,7 @@ initFeedback =
 
 initGuesses : Array Guess
 initGuesses =
-    Array.repeat 8 ( initFeedback, blankRow )
+    Array.repeat 8 initGuess
 
 
 initialModel : Model
@@ -314,7 +319,7 @@ update msg model =
                 ( _, row ) =
                     model.guesses
                         |> Array.get index
-                        |> Maybe.withDefault ( initFeedback, blankRow )
+                        |> Maybe.withDefault initGuess
 
                 feedback =
                     mkFeedback row model.pick
@@ -343,7 +348,9 @@ choice : Array Guess -> RowIndex -> Bool -> Int -> Html Msg
 choice guesses rowIndex disabled colIndex =
     let
         ( _, row2 ) =
-            Array.get colIndex guesses |> Maybe.withDefault ( initFeedback, blankRow )
+            guesses
+                |> Array.get colIndex
+                |> Maybe.withDefault initGuess
     in
     Html.select
         (Html.Attributes.value (getFromRow row2 rowIndex |> colorShow)
@@ -354,11 +361,7 @@ choice guesses rowIndex disabled colIndex =
                     [ onInput (UpdateColor rowIndex colIndex) ]
                )
         )
-        [ Html.option
-            [ attribute "selected" ""
-            , attribute "value" ""
-            ]
-            [ text "-" ]
+        [ Html.option [ attribute "selected" "", attribute "value" "" ] [ text "-" ]
         , Html.option [] [ text "\u{1F7E5}" ]
         , Html.option [] [ text "\u{1F7E6}" ]
         , Html.option [] [ text "\u{1F7E9}" ]
@@ -422,7 +425,7 @@ submitable guesses index colIndex =
         ( _, row ) =
             guesses
                 |> Array.get index
-                |> Maybe.withDefault ( initFeedback, blankRow )
+                |> Maybe.withDefault initGuess
     in
     if nonEmptyRow row && index == colIndex then
         [ onClick Submit ]
