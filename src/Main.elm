@@ -233,6 +233,31 @@ detectCorrectColor expected actual counter =
             counter
 
 
+hintTableList : Feedback -> List Hint
+hintTableList { correctColorPosition, correctColor, empty } =
+    let
+        correct =
+            List.repeat correctColorPosition CorrectColorPosition
+
+        color =
+            List.repeat correctColor CorrectColor
+
+        empties =
+            List.repeat empty Empty
+
+        values =
+            List.concat [ correct, color, empties ]
+
+        length =
+            List.length values
+    in
+    if length < 4 then
+        values ++ List.repeat (4 - length) Empty
+
+    else
+        values
+
+
 type alias Guess =
     ( Feedback, Row )
 
@@ -370,31 +395,6 @@ choice guesses rowIndex disabled colIndex =
         , Html.option [] [ text "\u{1F7EA}" ]
         , Html.option [] [ text "⬜️" ]
         ]
-
-
-hintTableList : Feedback -> List Hint
-hintTableList { correctColorPosition, correctColor, empty } =
-    let
-        correct =
-            List.repeat correctColorPosition CorrectColorPosition
-
-        color =
-            List.repeat correctColor CorrectColor
-
-        empties =
-            List.repeat empty Empty
-
-        values =
-            List.concat [ correct, color, empties ]
-
-        length =
-            List.length values
-    in
-    if length < 4 then
-        values ++ List.repeat (4 - length) Empty
-
-    else
-        values
 
 
 hintTable : Feedback -> List (Html Msg)
