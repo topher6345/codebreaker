@@ -354,16 +354,16 @@ choice guesses rowIndex disabled colIndex =
         ]
 
 
-hintTable feedback =
+hintTable { correctColorPosition, correctColor, empty } =
     let
         correct =
-            List.repeat feedback.correctColorPosition CorrectColorPosition
+            List.repeat correctColorPosition CorrectColorPosition
 
         color =
-            List.repeat feedback.correctColor CorrectColor
+            List.repeat correctColor CorrectColor
 
         empties =
-            List.repeat feedback.empty Empty
+            List.repeat empty Empty
 
         values =
             List.concat [ correct, color, empties ]
@@ -371,25 +371,14 @@ hintTable feedback =
         length =
             List.length values
 
-        array =
+        list =
             if length < 4 then
-                Array.fromList (values ++ List.repeat (4 - length) Empty)
+                values ++ List.repeat (4 - length) Empty
 
             else
-                Array.fromList values
+                values
     in
-    [ table []
-        [ tbody []
-            [ tr []
-                [ td [] [ Array.get 0 array |> Maybe.withDefault Empty |> showHint |> text ]
-                , td [] [ Array.get 1 array |> Maybe.withDefault Empty |> showHint |> text ]
-                ]
-            , tr []
-                [ td [] [ Array.get 2 array |> Maybe.withDefault Empty |> showHint |> text ]
-                , td [] [ Array.get 3 array |> Maybe.withDefault Empty |> showHint |> text ]
-                ]
-            ]
-        ]
+    [ div [] [ text <| String.join "" <| List.map showHint list ]
     ]
 
 
@@ -416,7 +405,7 @@ mkHintTable index guesses =
 
 
 hintsTr guesses =
-    tr [] (List.range 0 7 |> List.map (\i -> td [] <| mkHintTable i guesses))
+    div [] (List.range 0 7 |> List.map (\i -> div [] <| mkHintTable i guesses))
 
 
 guessesTds rowIndex currentRound guesses =
