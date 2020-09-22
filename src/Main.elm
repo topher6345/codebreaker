@@ -396,7 +396,7 @@ hintTable : Feedback -> List (Html Msg)
 hintTable feedback =
     let
         array =
-            Array.fromList hintTableList feedback
+            hintTableList feedback |> Array.fromList
 
         mkText index =
             array
