@@ -3,7 +3,7 @@ module Main exposing (Color(..), Feedback, Hint(..), Row(..), detectCorrectPosit
 import Array exposing (Array(..))
 import Browser
 import Html exposing (Html, button, div, table, tbody, td, text, tr)
-import Html.Attributes exposing (attribute)
+import Html.Attributes exposing (attribute, class)
 import Html.Events exposing (onClick, onInput)
 import List.Extra
 import Maybe exposing (Maybe(..))
@@ -463,11 +463,13 @@ mkSubmitRows guesses currentRound =
 
 view : Model -> Html Msg
 view model =
-    div []
+    div
+        [ class "root"
+        ]
         [ Html.h1 [] [ text "Codebreaker" ]
         , Html.p [] [ text model.flash ]
         , table []
-            [ tbody []
+            [ tbody [ class "hint" ]
                 [ hintsTr model.guesses ]
             , tbody []
                 [ tr [] <|
