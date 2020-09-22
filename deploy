@@ -1,0 +1,9 @@
+#! /usr/bin/env bash
+
+set -e
+
+if [ ! -d build ]; then
+  mkdir build
+fi
+
+elm make src/Main.elm --optimize --output build/main.js && gh-pages -d .
