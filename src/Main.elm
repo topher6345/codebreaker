@@ -475,6 +475,19 @@ mkSubmitRows guesses currentRound =
     List.range 0 7 |> List.map mkTd
 
 
+showGuess { currentRound, guesses, pick, reveal } rowIndex =
+    tr [] <|
+        guessesTds rowIndex currentRound guesses
+            ++ [ td []
+                    (if reveal then
+                        [ text <| colorShow <| getFromRow pick rowIndex ]
+
+                     else
+                        []
+                    )
+               ]
+
+
 view : Model -> Html Msg
 view model =
     div
