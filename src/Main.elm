@@ -1,4 +1,4 @@
-module Main exposing (Color(..), Either(..), Feedback, Hint(..), Row(..), detectCorrectPosition, main, mkFeedback, zipRow)
+module Main exposing (Color(..), Feedback, Hint(..), Row(..), detectCorrectPosition, main, mkFeedback)
 
 import Array exposing (Array(..))
 import Browser
@@ -11,10 +11,14 @@ import Random
 import String
 
 
+type alias Guess =
+    ( Feedback, Row )
+
+
 type alias Model =
     { currentRound : Int
     , row : Row
-    , guesses : Array ( Feedback, Row )
+    , guesses : Array Guess
     , pick : Row
     , reveal : Bool
     , flash : String
@@ -134,7 +138,7 @@ getFromRow row rowIndex =
             d
 
 
-updateRowColor : Array ( Feedback, Row ) -> RowIndex -> String -> Int -> ( Feedback, Row )
+updateRowColor : Array Guess -> RowIndex -> String -> Int -> Guess
 updateRowColor guesses rowIndex string colIndex =
     let
         ( feedback, row ) =
@@ -183,7 +187,7 @@ initFeedback =
     }
 
 
-initGuesses : Array ( Feedback, Row )
+initGuesses : Array Guess
 initGuesses =
     Array.repeat 8 ( initFeedback, blankRow )
 
@@ -197,13 +201,6 @@ initialModel =
     , flash = ""
     , reveal = False
     }
-
-
-type Msg
-    = UpdateColor RowIndex Int String
-    | Roll Pick
-    | Submit
-    | Cheat
 
 
 mkFeedback : Row -> Row -> Feedback
@@ -260,11 +257,6 @@ count predicate list =
         list
 
 
-type Either a b
-    = Left a
-    | Right b
-
-
 transpose : List ( Color, Color ) -> ( List Color, List Color )
 transpose rows =
     ( List.map Tuple.first rows, List.map Tuple.second rows )
@@ -285,6 +277,13 @@ detectCorrectColor expected actual counter =
 
         [] ->
             counter
+
+
+type Msg
+    = UpdateColor RowIndex Int String
+    | Roll Pick
+    | Submit
+    | Cheat
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -333,7 +332,7 @@ update msg model =
             ( { model | reveal = True }, Cmd.none )
 
 
-choice : Array ( Feedback, Row ) -> RowIndex -> Bool -> Int -> Html Msg
+choice : Array Guess -> RowIndex -> Bool -> Int -> Html Msg
 choice guesses rowIndex disabled colIndex =
     let
         ( _, row2 ) =
@@ -391,7 +390,7 @@ hintTable { correctColorPosition, correctColor, empty } =
     ]
 
 
-submitable : Array ( Feedback, Row ) -> Int -> Int -> List (Html.Attribute Msg)
+submitable : Array Guess -> Int -> Int -> List (Html.Attribute Msg)
 submitable guesses index colIndex =
     let
         ( _, row ) =
@@ -405,7 +404,7 @@ submitable guesses index colIndex =
         [ attribute "disabled" "true" ]
 
 
-mkHintTable : Int -> Array ( Feedback, Row ) -> List (Html Msg)
+mkHintTable : Int -> Array Guess -> List (Html Msg)
 mkHintTable index guesses =
     case Array.get index guesses of
         Just ( feedback, _ ) ->
@@ -415,12 +414,12 @@ mkHintTable index guesses =
             []
 
 
-hintsTr : Array ( Feedback, Row ) -> Html Msg
+hintsTr : Array Guess -> Html Msg
 hintsTr guesses =
     div [] (List.range 0 7 |> List.map (\i -> div [] <| mkHintTable i guesses))
 
 
-guessesTds : RowIndex -> Int -> Array ( Feedback, Row ) -> List (Html Msg)
+guessesTds : RowIndex -> Int -> Array Guess -> List (Html Msg)
 guessesTds rowIndex currentRound guesses =
     let
         mkTd index =
@@ -430,7 +429,7 @@ guessesTds rowIndex currentRound guesses =
         |> List.map mkTd
 
 
-mkSubmitRows : Array ( Feedback, Row ) -> Int -> List (Html Msg)
+mkSubmitRows : Array Guess -> Int -> List (Html Msg)
 mkSubmitRows guesses currentRound =
     List.range 0 7 |> List.map (\i -> td [] [ button (submitable guesses currentRound i) [ text <| String.fromInt (i + 1) ] ])
 
