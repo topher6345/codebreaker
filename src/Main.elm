@@ -385,8 +385,22 @@ hintTable { correctColorPosition, correctColor, empty } =
 
             else
                 values
+
+        array =
+            Array.fromList list
     in
-    [ div [] [ text <| String.join "" <| List.map showHint list ]
+    [ table []
+        [ tbody []
+            [ tr []
+                [ td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 0 array ]
+                , td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 1 array ]
+                ]
+            , tr []
+                [ td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 2 array ]
+                , td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 3 array ]
+                ]
+            ]
+        ]
     ]
 
 
@@ -416,7 +430,7 @@ mkHintTable index guesses =
 
 hintsTr : Array Guess -> Html Msg
 hintsTr guesses =
-    div [] (List.range 0 7 |> List.map (\i -> div [] <| mkHintTable i guesses))
+    tr [] (List.range 0 7 |> List.map (\i -> td [] <| mkHintTable i guesses))
 
 
 guessesTds : RowIndex -> Int -> Array Guess -> List (Html Msg)
