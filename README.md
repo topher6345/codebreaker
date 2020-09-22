@@ -1,4 +1,4 @@
-# Memory Game
+# Codebreaker
 
 in Elm
 
@@ -19,4 +19,3 @@ elm reactor
 ```sh
 elm-test
 ```
-
