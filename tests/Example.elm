@@ -2,7 +2,7 @@ module Example exposing (suite)
 
 import Expect
 import Main exposing (Color(..), Hint(..), Row(..), detectCorrectPosition, mkFeedback)
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
 suite : Test
