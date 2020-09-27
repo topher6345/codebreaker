@@ -287,6 +287,7 @@ type alias Model =
     , pick : Row
     , reveal : Bool
     , flash : String
+    , showNewGameModal : Bool
     }
 
 
@@ -298,6 +299,7 @@ initialModel =
     , guesses = initGuesses
     , flash = "Welcome to Codebreaker!"
     , reveal = False
+    , showNewGameModal = False
     }
 
 
@@ -307,6 +309,8 @@ type Msg
     | Submit
     | Cheat
     | NewGame
+    | ShowNewGameModal
+    | DismissNewGameConfirmationModal
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -320,9 +324,16 @@ update msg model =
                 , guesses = initGuesses
                 , flash = "Welcome to Codebreaker!"
                 , reveal = False
+                , showNewGameModal = False
               }
             , Random.generate Roll roll
             )
+
+        DismissNewGameConfirmationModal ->
+            ( { model | showNewGameModal = False, guesses = model.guesses }, Cmd.none )
+
+        ShowNewGameModal ->
+            ( { model | showNewGameModal = True }, Cmd.none )
 
         UpdateColor rowIndex colIndex string ->
             ( { model
@@ -488,69 +499,82 @@ showGuess { currentRound, guesses, pick, reveal } rowIndex =
                ]
 
 
+newGameConfirmModal =
+    div [ class "new-game-confirm-modal" ]
+        [ Html.h2 [] [ text "Are you sure?", button [ onClick NewGame ] [ text "Yes" ], button [ onClick DismissNewGameConfirmationModal ] [ text "Cancel" ] ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     div
         [ class "root"
         ]
-        [ Html.h1 [] [ text "Codebreaker" ]
-        , Html.p [] [ text model.flash ]
-        , table []
-            [ tbody [ class "hint" ]
-                [ hintsTr model.guesses ]
-            , tbody []
-                [ tr [] <|
-                    guessesTds First model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick First ]
+    <|
+        (if model.showNewGameModal then
+            [ newGameConfirmModal ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    guessesTds Second model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick Second ]
+         else
+            []
+        )
+            ++ [ Html.h1 [] [ text "Codebreaker" ]
+               , Html.p [] [ text model.flash ]
+               , table []
+                    [ tbody [ class "hint" ]
+                        [ hintsTr model.guesses ]
+                    , tbody []
+                        [ tr [] <|
+                            guessesTds First model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick First ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    guessesTds Third model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick Third ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            guessesTds Second model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick Second ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    guessesTds Fourth model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick Fourth ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            guessesTds Third model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick Third ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    mkSubmitRows model.guesses model.currentRound
-                        ++ [ td [] [ button [ onClick Cheat ] [ text "Cheat" ] ]
-                           ]
-                ]
-            ]
-        , if model.guesses == initialModel.guesses then
-            button [ attribute "disabled" "true" ] [ text "New Game" ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            guessesTds Fourth model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick Fourth ]
 
-          else
-            button [ onClick NewGame ] [ text "New Game" ]
-        ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            mkSubmitRows model.guesses model.currentRound
+                                ++ [ td [] [ button [ onClick Cheat ] [ text "Cheat" ] ]
+                                   ]
+                        ]
+                    ]
+               , if model.guesses == initialModel.guesses then
+                    button [ attribute "disabled" "true" ] [ text "New Game" ]
+
+                 else
+                    button [ onClick ShowNewGameModal ] [ text "New Game" ]
+               ]
 
 
 
