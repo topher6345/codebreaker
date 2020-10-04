@@ -11,20 +11,6 @@ import Random
 import String
 
 
-type alias Guess =
-    ( Feedback, Row )
-
-
-type alias Model =
-    { currentRound : Int
-    , row : Row
-    , guesses : Array Guess
-    , pick : Row
-    , reveal : Bool
-    , flash : String
-    }
-
-
 type Color
     = Red
     | Blue
@@ -138,21 +124,6 @@ getFromRow row rowIndex =
             d
 
 
-updateRowColor : Array Guess -> RowIndex -> String -> Int -> Guess
-updateRowColor guesses rowIndex string colIndex =
-    let
-        ( feedback, row ) =
-            Array.get colIndex guesses
-                |> Maybe.withDefault ( initFeedback, blankRow )
-    in
-    case mkColor string of
-        None ->
-            ( feedback, updateRow row rowIndex None )
-
-        color ->
-            ( feedback, updateRow row rowIndex color )
-
-
 type Hint
     = CorrectColorPosition
     | CorrectColor
@@ -184,22 +155,6 @@ initFeedback =
     { correctColorPosition = 0
     , correctColor = 0
     , empty = 4
-    }
-
-
-initGuesses : Array Guess
-initGuesses =
-    Array.repeat 8 ( initFeedback, blankRow )
-
-
-initialModel : Model
-initialModel =
-    { currentRound = 0
-    , row = blankRow
-    , pick = Row Red Red Red Red
-    , guesses = initGuesses
-    , flash = "Welcome to Codebreaker!"
-    , reveal = False
     }
 
 
@@ -245,16 +200,15 @@ zipRow (Row a b c d) (Row e f g h) =
 
 count : (a -> Bool) -> List a -> Int
 count predicate list =
-    List.foldr
-        (\a b ->
-            if predicate a then
-                b + 1
+    let
+        apply elem int =
+            if predicate elem then
+                int + 1
 
             else
-                b
-        )
-        0
-        list
+                int
+    in
+    List.foldr apply 0 list
 
 
 transpose : List ( Color, Color ) -> ( List Color, List Color )
@@ -265,18 +219,88 @@ transpose rows =
 detectCorrectColor : List Color -> List Color -> Int -> Int
 detectCorrectColor expected actual counter =
     case expected of
-        expectedHead :: expectedTail ->
-            if List.member expectedHead actual then
-                detectCorrectColor
-                    (List.Extra.remove expectedHead expected)
-                    (List.Extra.remove expectedHead actual)
-                    (counter + 1)
+        head :: tail ->
+            if List.member head actual then
+                detectCorrectColor (List.Extra.remove head expected) (List.Extra.remove head actual) (counter + 1)
 
             else
-                detectCorrectColor expectedTail actual counter
+                detectCorrectColor tail actual counter
 
         [] ->
             counter
+
+
+hintTableList : Feedback -> List Hint
+hintTableList { correctColorPosition, correctColor, empty } =
+    let
+        correct =
+            List.repeat correctColorPosition CorrectColorPosition
+
+        color =
+            List.repeat correctColor CorrectColor
+
+        empties =
+            List.repeat empty Empty
+
+        values =
+            List.concat [ correct, color, empties ]
+
+        length =
+            List.length values
+    in
+    if length < 4 then
+        values ++ List.repeat (4 - length) Empty
+
+    else
+        values
+
+
+type alias Guess =
+    ( Feedback, Row )
+
+
+initGuess : Guess
+initGuess =
+    ( initFeedback, blankRow )
+
+
+initGuesses : Array Guess
+initGuesses =
+    Array.repeat 8 initGuess
+
+
+updateRowColor : Array Guess -> RowIndex -> String -> Int -> Guess
+updateRowColor guesses rowIndex string colIndex =
+    let
+        ( feedback, row ) =
+            guesses
+                |> Array.get colIndex
+                |> Maybe.withDefault initGuess
+    in
+    ( feedback, updateRow row rowIndex (mkColor string) )
+
+
+type alias Model =
+    { currentRound : Int
+    , row : Row
+    , guesses : Array Guess
+    , pick : Row
+    , reveal : Bool
+    , flash : String
+    , showNewGameModal : Bool
+    }
+
+
+initialModel : Model
+initialModel =
+    { currentRound = 0
+    , row = blankRow
+    , pick = Row Red Red Red Red
+    , guesses = initGuesses
+    , flash = "Welcome to Codebreaker!"
+    , reveal = False
+    , showNewGameModal = False
+    }
 
 
 type Msg
@@ -285,6 +309,8 @@ type Msg
     | Submit
     | Cheat
     | NewGame
+    | ShowNewGameModal
+    | DismissNewGameConfirmationModal
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -298,9 +324,16 @@ update msg model =
                 , guesses = initGuesses
                 , flash = "Welcome to Codebreaker!"
                 , reveal = False
+                , showNewGameModal = False
               }
             , Random.generate Roll roll
             )
+
+        DismissNewGameConfirmationModal ->
+            ( { model | showNewGameModal = False, guesses = model.guesses }, Cmd.none )
+
+        ShowNewGameModal ->
+            ( { model | showNewGameModal = True }, Cmd.none )
 
         UpdateColor rowIndex colIndex string ->
             ( { model
@@ -320,7 +353,7 @@ update msg model =
                 ( _, row ) =
                     model.guesses
                         |> Array.get index
-                        |> Maybe.withDefault ( initFeedback, blankRow )
+                        |> Maybe.withDefault initGuess
 
                 feedback =
                     mkFeedback row model.pick
@@ -349,7 +382,9 @@ choice : Array Guess -> RowIndex -> Bool -> Int -> Html Msg
 choice guesses rowIndex disabled colIndex =
     let
         ( _, row2 ) =
-            Array.get colIndex guesses |> Maybe.withDefault ( initFeedback, blankRow )
+            guesses
+                |> Array.get colIndex
+                |> Maybe.withDefault initGuess
     in
     Html.select
         (Html.Attributes.value (getFromRow row2 rowIndex |> colorShow)
@@ -360,11 +395,7 @@ choice guesses rowIndex disabled colIndex =
                     [ onInput (UpdateColor rowIndex colIndex) ]
                )
         )
-        [ Html.option
-            [ attribute "selected" ""
-            , attribute "value" ""
-            ]
-            [ text "-" ]
+        [ Html.option [ attribute "selected" "", attribute "value" "" ] [ text "-" ]
         , Html.option [] [ text "\u{1F7E5}" ]
         , Html.option [] [ text "\u{1F7E6}" ]
         , Html.option [] [ text "\u{1F7E9}" ]
@@ -375,43 +406,24 @@ choice guesses rowIndex disabled colIndex =
 
 
 hintTable : Feedback -> List (Html Msg)
-hintTable { correctColorPosition, correctColor, empty } =
+hintTable feedback =
     let
-        correct =
-            List.repeat correctColorPosition CorrectColorPosition
-
-        color =
-            List.repeat correctColor CorrectColor
-
-        empties =
-            List.repeat empty Empty
-
-        values =
-            List.concat [ correct, color, empties ]
-
-        length =
-            List.length values
-
-        list =
-            if length < 4 then
-                values ++ List.repeat (4 - length) Empty
-
-            else
-                values
-
         array =
-            Array.fromList list
+            feedback
+                |> hintTableList
+                |> Array.fromList
+
+        mkText index =
+            array
+                |> Array.get index
+                |> Maybe.withDefault Empty
+                |> showHint
+                |> text
     in
     [ table []
         [ tbody []
-            [ tr []
-                [ td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 0 array ]
-                , td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 1 array ]
-                ]
-            , tr []
-                [ td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 2 array ]
-                , td [] [ text <| showHint <| Maybe.withDefault Empty <| Array.get 3 array ]
-                ]
+            [ tr [] [ td [] [ mkText 0 ], td [] [ mkText 1 ] ]
+            , tr [] [ td [] [ mkText 2 ], td [] [ mkText 3 ] ]
             ]
         ]
     ]
@@ -421,8 +433,9 @@ submitable : Array Guess -> Int -> Int -> List (Html.Attribute Msg)
 submitable guesses index colIndex =
     let
         ( _, row ) =
-            Array.get index guesses
-                |> Maybe.withDefault ( initFeedback, blankRow )
+            guesses
+                |> Array.get index
+                |> Maybe.withDefault initGuess
     in
     if nonEmptyRow row && index == colIndex then
         [ onClick Submit ]
@@ -443,7 +456,13 @@ mkHintTable index guesses =
 
 hintsTr : Array Guess -> Html Msg
 hintsTr guesses =
-    tr [] (List.range 0 7 |> List.map (\i -> td [] <| mkHintTable i guesses))
+    let
+        mkTd index =
+            guesses
+                |> mkHintTable index
+                |> td []
+    in
+    tr [] (List.range 0 7 |> List.map mkTd)
 
 
 guessesTds : RowIndex -> Int -> Array Guess -> List (Html Msg)
@@ -452,13 +471,38 @@ guessesTds rowIndex currentRound guesses =
         mkTd index =
             td [] [ choice guesses rowIndex (currentRound /= index) index ]
     in
-    List.range 0 7
-        |> List.map mkTd
+    List.range 0 7 |> List.map mkTd
 
 
 mkSubmitRows : Array Guess -> Int -> List (Html Msg)
 mkSubmitRows guesses currentRound =
-    List.range 0 7 |> List.map (\i -> td [] [ button (submitable guesses currentRound i) [ text <| String.fromInt (i + 1) ] ])
+    let
+        mkTd index =
+            td []
+                [ button (submitable guesses currentRound index)
+                    [ String.fromInt (index + 1) |> text ]
+                ]
+    in
+    List.range 0 7 |> List.map mkTd
+
+
+showGuess { currentRound, guesses, pick, reveal } rowIndex =
+    tr [] <|
+        guessesTds rowIndex currentRound guesses
+            ++ [ td []
+                    (if reveal then
+                        [ text <| colorShow <| getFromRow pick rowIndex ]
+
+                     else
+                        []
+                    )
+               ]
+
+
+newGameConfirmModal =
+    div [ class "new-game-confirm-modal" ]
+        [ Html.h2 [] [ text "Are you sure?", button [ onClick NewGame ] [ text "Yes" ], button [ onClick DismissNewGameConfirmationModal ] [ text "Cancel" ] ]
+        ]
 
 
 view : Model -> Html Msg
@@ -466,64 +510,71 @@ view model =
     div
         [ class "root"
         ]
-        [ Html.h1 [] [ text "Codebreaker" ]
-        , Html.p [] [ text model.flash ]
-        , table []
-            [ tbody [ class "hint" ]
-                [ hintsTr model.guesses ]
-            , tbody []
-                [ tr [] <|
-                    guessesTds First model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| (\(Row a _ _ _) -> a) model.pick ]
+    <|
+        (if model.showNewGameModal then
+            [ newGameConfirmModal ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    guessesTds Second model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| (\(Row _ b _ _) -> b) model.pick ]
+         else
+            []
+        )
+            ++ [ Html.h1 [] [ text "Codebreaker" ]
+               , Html.p [] [ text model.flash ]
+               , table []
+                    [ tbody [ class "hint" ]
+                        [ hintsTr model.guesses ]
+                    , tbody []
+                        [ tr [] <|
+                            guessesTds First model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick First ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    guessesTds Third model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| (\(Row _ _ c _) -> c) model.pick ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            guessesTds Second model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick Second ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    guessesTds Fourth model.currentRound model.guesses
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| (\(Row _ _ _ d) -> d) model.pick ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            guessesTds Third model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick Third ]
 
-                                 else
-                                    []
-                                )
-                           ]
-                , tr [] <|
-                    mkSubmitRows model.guesses model.currentRound
-                        ++ [ td [] [ button [ onClick Cheat ] [ text "Cheat" ] ]
-                           ]
-                ]
-            ]
-        , if model.guesses == initialModel.guesses then
-            button [ attribute "disabled" "true" ] [ text "New Game" ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            guessesTds Fourth model.currentRound model.guesses
+                                ++ [ td []
+                                        (if model.reveal then
+                                            [ text <| colorShow <| getFromRow model.pick Fourth ]
 
-          else
-            button [ onClick NewGame ] [ text "New Game" ]
-        ]
+                                         else
+                                            []
+                                        )
+                                   ]
+                        , tr [] <|
+                            mkSubmitRows model.guesses model.currentRound
+                                ++ [ td [] [ button [ onClick Cheat ] [ text "Cheat" ] ]
+                                   ]
+                        ]
+                    ]
+               , if model.guesses == initialModel.guesses then
+                    button [ attribute "disabled" "true" ] [ text "New Game" ]
+
+                 else
+                    button [ onClick ShowNewGameModal ] [ text "New Game" ]
+               ]
 
 
 
