@@ -55,6 +55,13 @@
         height: 100%;
         background-color: aqua;
         z-index: 9;
+        display: flex;
+        justify-content: center;
+         align-items: center;
+      }
+
+      .new-game-confirm-modal p {
+        font-size: 0.5em;
       }
 
       table {
@@ -76,14 +83,16 @@
         padding: 0.5em;
       }
     </style>
+    <title>Codebreaker</title>
     <script src="build/main.js"></script>
   </head>
   <body>
     <main></main>
     <script>
-      window.onbeforeunload = function () {
-        return "Your score will be lost";
-      };
+      window.addEventListener("beforeunload", function (e) {
+        e.preventDefault();
+        return "";
+      });
       var app = Elm.Main.init({ node: document.querySelector("main") });
       // you can use ports and stuff here
     </script>

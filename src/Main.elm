@@ -150,6 +150,10 @@ type alias Feedback =
     }
 
 
+feedbackToString { correctColorPosition, correctColor, empty } =
+    String.fromInt correctColorPosition ++ " Bulls, " ++ String.fromInt correctColor ++ " Cows, "
+
+
 initFeedback : Feedback
 initFeedback =
     { correctColorPosition = 0
@@ -280,6 +284,10 @@ updateRowColor guesses rowIndex string colIndex =
     ( feedback, updateRow row rowIndex (mkColor string) )
 
 
+currentRoundDisplay currentRound =
+    String.fromInt (8 - currentRound) ++ " rounds left."
+
+
 type alias Model =
     { currentRound : Int
     , row : Row
@@ -366,13 +374,13 @@ update msg model =
             in
             case ( feedback.correctColorPosition == 4, currentRound > 8 ) of
                 ( True, False ) ->
-                    ( { model | flash = "You win!", currentRound = currentRound, guesses = newGuesses }, Cmd.none )
+                    ( { model | flash = "You win!", reveal = True, currentRound = currentRound, guesses = newGuesses }, Cmd.none )
 
                 ( False, True ) ->
                     ( { model | flash = "You Lose", currentRound = currentRound, guesses = newGuesses }, Cmd.none )
 
                 _ ->
-                    ( { model | currentRound = currentRound, guesses = newGuesses }, Cmd.none )
+                    ( { model | flash = feedbackToString feedback ++ currentRoundDisplay currentRound, currentRound = currentRound, guesses = newGuesses }, Cmd.none )
 
         Cheat ->
             ( { model | reveal = True }, Cmd.none )
@@ -501,7 +509,15 @@ showGuess { currentRound, guesses, pick, reveal } rowIndex =
 
 newGameConfirmModal =
     div [ class "new-game-confirm-modal" ]
-        [ Html.h2 [] [ text "Are you sure?", button [ onClick NewGame ] [ text "Yes" ], button [ onClick DismissNewGameConfirmationModal ] [ text "Cancel" ] ]
+        [ Html.h2 []
+            [ text "Are you sure?"
+            , Html.p []
+                [ text "You will lose all your progress in the current game" ]
+            , button
+                [ onClick NewGame ]
+                [ text "Yes" ]
+            , button [ onClick DismissNewGameConfirmationModal ] [ text "Cancel" ]
+            ]
         ]
 
 
