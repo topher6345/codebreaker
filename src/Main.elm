@@ -288,6 +288,13 @@ currentRoundDisplay currentRound =
     String.fromInt (8 - currentRound) ++ " rounds left."
 
 
+type alias HistoryEntry =
+    { win : Bool
+    , rounds : Int
+    , pick : Row
+    }
+
+
 type alias Model =
     { currentRound : Int
     , row : Row
@@ -295,6 +302,7 @@ type alias Model =
     , pick : Row
     , reveal : Bool
     , flash : String
+    , history : List HistoryEntry
     , showNewGameModal : Bool
     }
 
@@ -307,6 +315,7 @@ initialModel =
     , guesses = initGuesses
     , flash = "Welcome to Codebreaker!"
     , reveal = False
+    , history = []
     , showNewGameModal = False
     }
 
