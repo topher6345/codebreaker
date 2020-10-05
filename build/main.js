@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.ag.P === region.aq.P)
+	if (region.ai.P === region.as.P)
 	{
-		return 'on line ' + region.ag.P;
+		return 'on line ' + region.ai.P;
 	}
-	return 'on lines ' + region.ag.P + ' through ' + region.aq.P;
+	return 'on lines ' + region.ai.P + ' through ' + region.as.P;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bd,
-		impl.by,
-		impl.bu,
+		impl.bf,
+		impl.bA,
+		impl.bw,
 		function() { return function() {} }
 	);
 });
@@ -2704,9 +2704,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		z: func(record.z),
-		ah: record.ah,
-		ad: record.ad
+		A: func(record.A),
+		aj: record.aj,
+		af: record.af
 	}
 });
 
@@ -2974,11 +2974,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.z;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.ah;
+		var message = !tag ? value : tag < 3 ? value.a : value.A;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aj;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.ad) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.af) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3928,11 +3928,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bd,
-		impl.by,
-		impl.bu,
+		impl.bf,
+		impl.bA,
+		impl.bw,
 		function(sendToApp, initialModel) {
-			var view = impl.bz;
+			var view = impl.bB;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3964,12 +3964,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bd,
-		impl.by,
-		impl.bu,
+		impl.bf,
+		impl.bA,
+		impl.bw,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.af && impl.af(sendToApp)
-			var view = impl.bz;
+			var divertHrefToApp = impl.ah && impl.ah(sendToApp)
+			var view = impl.bB;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3977,12 +3977,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.a$);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.a1);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.bx) && (_VirtualDom_doc.title = title = doc.bx);
+				(title !== doc.bz) && (_VirtualDom_doc.title = title = doc.bz);
 			});
 		}
 	);
@@ -4038,12 +4038,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.bo;
-	var onUrlRequest = impl.bp;
+	var onUrlChange = impl.bq;
+	var onUrlRequest = impl.br;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		af: function(sendToApp)
+		ah: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4059,9 +4059,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.aI === next.aI
-							&& curr.aw === next.aw
-							&& curr.aF.a === next.aF.a
+							&& curr.aK === next.aK
+							&& curr.ay === next.ay
+							&& curr.aH.a === next.aH.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4069,13 +4069,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		bd: function(flags)
+		bf: function(flags)
 		{
-			return A3(impl.bd, flags, _Browser_getUrl(), key);
+			return A3(impl.bf, flags, _Browser_getUrl(), key);
 		},
-		bz: impl.bz,
-		by: impl.by,
-		bu: impl.bu
+		bB: impl.bB,
+		bA: impl.bA,
+		bw: impl.bw
 	});
 }
 
@@ -4141,17 +4141,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { bb: 'hidden', a1: 'visibilitychange' }
+		? { bd: 'hidden', a3: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { bb: 'mozHidden', a1: 'mozvisibilitychange' }
+		? { bd: 'mozHidden', a3: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { bb: 'msHidden', a1: 'msvisibilitychange' }
+		? { bd: 'msHidden', a3: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { bb: 'webkitHidden', a1: 'webkitvisibilitychange' }
-		: { bb: 'hidden', a1: 'visibilitychange' };
+		? { bd: 'webkitHidden', a3: 'webkitvisibilitychange' }
+		: { bd: 'hidden', a3: 'visibilitychange' };
 }
 
 
@@ -4232,12 +4232,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		aO: _Browser_getScene(),
-		aU: {
-			aW: _Browser_window.pageXOffset,
-			aX: _Browser_window.pageYOffset,
-			aV: _Browser_doc.documentElement.clientWidth,
-			av: _Browser_doc.documentElement.clientHeight
+		aQ: _Browser_getScene(),
+		aW: {
+			aY: _Browser_window.pageXOffset,
+			aZ: _Browser_window.pageYOffset,
+			aX: _Browser_doc.documentElement.clientWidth,
+			ax: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4247,8 +4247,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		aV: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		av: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		aX: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		ax: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4271,15 +4271,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			aO: {
-				aV: node.scrollWidth,
-				av: node.scrollHeight
+			aQ: {
+				aX: node.scrollWidth,
+				ax: node.scrollHeight
 			},
-			aU: {
-				aW: node.scrollLeft,
-				aX: node.scrollTop,
-				aV: node.clientWidth,
-				av: node.clientHeight
+			aW: {
+				aY: node.scrollLeft,
+				aZ: node.scrollTop,
+				aX: node.clientWidth,
+				ax: node.clientHeight
 			}
 		};
 	});
@@ -4309,18 +4309,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			aO: _Browser_getScene(),
-			aU: {
-				aW: x,
-				aX: y,
-				aV: _Browser_doc.documentElement.clientWidth,
-				av: _Browser_doc.documentElement.clientHeight
+			aQ: _Browser_getScene(),
+			aW: {
+				aY: x,
+				aZ: y,
+				aX: _Browser_doc.documentElement.clientWidth,
+				ax: _Browser_doc.documentElement.clientHeight
 			},
-			a5: {
-				aW: x + rect.left,
-				aX: y + rect.top,
-				aV: rect.width,
-				av: rect.height
+			a7: {
+				aY: x + rect.left,
+				aZ: y + rect.top,
+				aX: rect.width,
+				ax: rect.height
 			}
 		};
 	});
@@ -4942,7 +4942,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {as: fragment, aw: host, aD: path, aF: port_, aI: protocol, aJ: query};
+		return {au: fragment, ay: host, aF: path, aH: port_, aK: protocol, aL: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5224,6 +5224,24 @@ var $elm$browser$Browser$element = _Browser_element;
 var $author$project$Main$Roll = function (a) {
 	return {$: 1, a: a};
 };
+var $elm$json$Json$Decode$decodeValue = _Json_run;
+var $author$project$Main$HistoryEntry = F3(
+	function (win, rounds, pick) {
+		return {g: pick, S: rounds, X: win};
+	});
+var $elm$json$Json$Decode$array = _Json_decodeArray;
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map3 = _Json_map3;
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Main$decoder = $elm$json$Json$Decode$array(
+	A4(
+		$elm$json$Json$Decode$map3,
+		$author$project$Main$HistoryEntry,
+		A2($elm$json$Json$Decode$field, 'win', $elm$json$Json$Decode$bool),
+		A2($elm$json$Json$Decode$field, 'rounds', $elm$json$Json$Decode$int),
+		A2($elm$json$Json$Decode$field, 'pick', $elm$json$Json$Decode$string)));
 var $elm$random$Random$Generate = $elm$core$Basics$identity;
 var $elm$random$Random$Seed = F2(
 	function (a, b) {
@@ -5342,12 +5360,13 @@ var $elm$core$Array$repeat = F2(
 	});
 var $author$project$Main$initGuesses = A2($elm$core$Array$repeat, 8, $author$project$Main$initGuess);
 var $author$project$Main$initialModel = {
-	j: 0,
-	C: 'Welcome to Codebreaker!',
+	k: 0,
+	z: 'Welcome to Codebreaker!',
 	b: $author$project$Main$initGuesses,
-	u: A4($author$project$Main$Row, 0, 0, 0, 0),
-	v: false,
-	ae: $author$project$Main$blankRow,
+	v: _List_Nil,
+	g: A4($author$project$Main$Row, 0, 0, 0, 0),
+	u: false,
+	ag: $author$project$Main$blankRow,
 	J: false
 };
 var $elm$random$Random$map4 = F5(
@@ -5467,9 +5486,26 @@ var $author$project$Main$randColor = A2(
 	_List_fromArray(
 		[2, 1, 3, 4, 5]));
 var $author$project$Main$roll = A5($elm$random$Random$map4, $author$project$Main$Row, $author$project$Main$randColor, $author$project$Main$randColor, $author$project$Main$randColor, $author$project$Main$randColor);
-var $author$project$Main$init = function (_v0) {
+var $author$project$Main$init = function (flags) {
 	return _Utils_Tuple2(
-		$author$project$Main$initialModel,
+		function () {
+			var _v0 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$decoder, flags);
+			if (!_v0.$) {
+				var history = _v0.a;
+				return _Utils_update(
+					$author$project$Main$initialModel,
+					{
+						v: $elm$core$Array$toList(history)
+					});
+			} else {
+				var message = _v0.a;
+				return _Utils_update(
+					$author$project$Main$initialModel,
+					{
+						z: 'Error loading history: ' + $elm$json$Json$Decode$errorToString(message)
+					});
+			}
+		}(),
 		A2($elm$random$Random$generate, $author$project$Main$Roll, $author$project$Main$roll));
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5479,6 +5515,51 @@ var $author$project$Main$subscriptions = function (_v0) {
 };
 var $author$project$Main$currentRoundDisplay = function (currentRound) {
 	return $elm$core$String$fromInt(8 - currentRound) + ' rounds left.';
+};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(0),
+				entries));
+	});
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Main$encode = function (history) {
+	return A2(
+		$elm$json$Json$Encode$list,
+		function (h) {
+			return $elm$json$Json$Encode$object(
+				_List_fromArray(
+					[
+						_Utils_Tuple2(
+						'win',
+						$elm$json$Json$Encode$bool(h.X)),
+						_Utils_Tuple2(
+						'rounds',
+						$elm$json$Json$Encode$int(h.S)),
+						_Utils_Tuple2(
+						'pick',
+						$elm$json$Json$Encode$string(h.g))
+					]));
+		},
+		history);
 };
 var $author$project$Main$feedbackToString = function (_v0) {
 	var correctColorPosition = _v0.H;
@@ -5675,6 +5756,31 @@ var $author$project$Main$mkFeedback = F2(
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Main$colorShow = function (color) {
+	switch (color) {
+		case 0:
+			return '\uD83D\uDFE5';
+		case 1:
+			return '\uD83D\uDFE6';
+		case 2:
+			return '\uD83D\uDFE9';
+		case 3:
+			return '\uD83D\uDFE8';
+		case 4:
+			return '\uD83D\uDFEA';
+		case 5:
+			return '⬜️';
+		default:
+			return '';
+	}
+};
+var $author$project$Main$rowToString = function (_v0) {
+	var a = _v0.a;
+	var b = _v0.b;
+	var c = _v0.c;
+	var d = _v0.d;
+	return $author$project$Main$colorShow(a) + (' ' + ($author$project$Main$colorShow(b) + (' ' + ($author$project$Main$colorShow(c) + (' ' + $author$project$Main$colorShow(d))))));
+};
 var $elm$core$Elm$JsArray$unsafeSet = _JsArray_unsafeSet;
 var $elm$core$Array$setHelp = F4(
 	function (shift, index, value, tree) {
@@ -5795,6 +5901,7 @@ var $author$project$Main$updateRowColor = F4(
 				rowIndex,
 				$author$project$Main$mkColor(string)));
 	});
+var $author$project$Main$writeHistory = _Platform_outgoingPort('writeHistory', $elm$core$Basics$identity);
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -5803,12 +5910,12 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							j: 0,
-							C: 'Welcome to Codebreaker!',
+							k: 0,
+							z: 'Welcome to Codebreaker!',
 							b: $author$project$Main$initGuesses,
-							u: A4($author$project$Main$Row, 0, 0, 0, 0),
-							v: false,
-							ae: $author$project$Main$blankRow,
+							g: A4($author$project$Main$Row, 0, 0, 0, 0),
+							u: false,
+							ag: $author$project$Main$blankRow,
 							J: false
 						}),
 					A2($elm$random$Random$generate, $author$project$Main$Roll, $author$project$Main$roll));
@@ -5844,17 +5951,17 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{u: pick}),
+						{g: pick}),
 					$elm$core$Platform$Cmd$none);
 			case 2:
-				var index = model.j;
-				var currentRound = model.j + 1;
+				var index = model.k;
+				var currentRound = model.k + 1;
 				var _v1 = A2(
 					$elm$core$Maybe$withDefault,
 					$author$project$Main$initGuess,
 					A2($elm$core$Array$get, index, model.b));
 				var row = _v1.b;
-				var feedback = A2($author$project$Main$mkFeedback, row, model.u);
+				var feedback = A2($author$project$Main$mkFeedback, row, model.g);
 				var newGuesses = A3(
 					$elm$core$Array$set,
 					index,
@@ -5865,21 +5972,43 @@ var $author$project$Main$update = F2(
 				while (true) {
 					if (_v2.a) {
 						if (!_v2.b) {
+							var history = _Utils_ap(
+								_List_fromArray(
+									[
+										{
+										g: $author$project$Main$rowToString(model.g),
+										S: currentRound,
+										X: true
+									}
+									]),
+								model.v);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{j: currentRound, C: 'You win!', b: newGuesses, v: true}),
-								$elm$core$Platform$Cmd$none);
+									{k: currentRound, z: 'You win!', b: newGuesses, v: history, u: true}),
+								$author$project$Main$writeHistory(
+									$author$project$Main$encode(history)));
 						} else {
 							break _v2$2;
 						}
 					} else {
 						if (_v2.b) {
+							var history = _Utils_ap(
+								_List_fromArray(
+									[
+										{
+										g: $author$project$Main$rowToString(model.g),
+										S: currentRound,
+										X: false
+									}
+									]),
+								model.v);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{j: currentRound, C: 'You Lose', b: newGuesses}),
-								$elm$core$Platform$Cmd$none);
+									{k: currentRound, z: 'You Lose', b: newGuesses, v: history}),
+								$author$project$Main$writeHistory(
+									$author$project$Main$encode(history)));
 						} else {
 							break _v2$2;
 						}
@@ -5889,22 +6018,31 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							j: currentRound,
-							C: _Utils_ap(
+							k: currentRound,
+							z: _Utils_ap(
 								$author$project$Main$feedbackToString(feedback),
 								$author$project$Main$currentRoundDisplay(currentRound)),
 							b: newGuesses
 						}),
 					$elm$core$Platform$Cmd$none);
+			case 3:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{u: true}),
+					$elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{v: true}),
-					$elm$core$Platform$Cmd$none);
+						{v: _List_Nil}),
+					$author$project$Main$writeHistory(
+						$author$project$Main$encode(_List_Nil)));
 		}
 	});
+var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $author$project$Main$Cheat = {$: 3};
+var $author$project$Main$ClearHistory = {$: 7};
 var $author$project$Main$First = 0;
 var $author$project$Main$Fourth = 3;
 var $author$project$Main$Second = 1;
@@ -5919,7 +6057,6 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -5928,24 +6065,6 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $author$project$Main$colorShow = function (color) {
-	switch (color) {
-		case 0:
-			return '\uD83D\uDFE5';
-		case 1:
-			return '\uD83D\uDFE6';
-		case 2:
-			return '\uD83D\uDFE9';
-		case 3:
-			return '\uD83D\uDFE8';
-		case 4:
-			return '\uD83D\uDFEA';
-		case 5:
-			return '⬜️';
-		default:
-			return '';
-	}
-};
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $author$project$Main$getFromRow = F2(
 	function (row, rowIndex) {
@@ -5991,12 +6110,10 @@ var $elm$html$Html$Events$stopPropagationOn = F2(
 			event,
 			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
 	});
-var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
 		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
 	});
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $elm$html$Html$Events$targetValue = A2(
 	$elm$json$Json$Decode$at,
 	_List_fromArray(
@@ -6309,6 +6426,7 @@ var $author$project$Main$hintsTr = function (guesses) {
 			mkTd,
 			A2($elm$core$List$range, 0, 7)));
 };
+var $elm$html$Html$li = _VirtualDom_node('li');
 var $author$project$Main$Submit = {$: 2};
 var $elm$core$Basics$composeL = F3(
 	function (g, f, x) {
@@ -6435,6 +6553,14 @@ var $author$project$Main$newGameConfirmModal = A2(
 						]))
 				]))
 		]));
+var $elm$html$Html$ol = _VirtualDom_node('ol');
+var $author$project$Main$showHistory = function (_v0) {
+	var win = _v0.X;
+	var rounds = _v0.S;
+	var pick = _v0.g;
+	var message = win ? 'You won in ' : 'You lost in ';
+	return message + ($elm$core$String$fromInt(rounds) + (' rounds. ' + pick));
+};
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6459,7 +6585,7 @@ var $author$project$Main$view = function (model) {
 					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text(model.C)
+							$elm$html$Html$text(model.z)
 						])),
 					_Utils_eq(model.b, $author$project$Main$initialModel.b) ? A2(
 					$elm$html$Html$button,
@@ -6479,6 +6605,16 @@ var $author$project$Main$view = function (model) {
 					_List_fromArray(
 						[
 							$elm$html$Html$text('New Game')
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick($author$project$Main$ClearHistory)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Clear History')
 						])),
 					A2(
 					$elm$html$Html$table,
@@ -6507,17 +6643,17 @@ var $author$project$Main$view = function (model) {
 											$elm$html$Html$Attributes$class('pick')
 										]),
 									_Utils_ap(
-										A3($author$project$Main$guessesTds, 0, model.j, model.b),
+										A3($author$project$Main$guessesTds, 0, model.k, model.b),
 										_List_fromArray(
 											[
 												A2(
 												$elm$html$Html$td,
 												_List_Nil,
-												model.v ? _List_fromArray(
+												model.u ? _List_fromArray(
 													[
 														$elm$html$Html$text(
 														$author$project$Main$colorShow(
-															A2($author$project$Main$getFromRow, model.u, 0)))
+															A2($author$project$Main$getFromRow, model.g, 0)))
 													]) : _List_fromArray(
 													[
 														$elm$html$Html$text('❓')
@@ -6530,17 +6666,17 @@ var $author$project$Main$view = function (model) {
 											$elm$html$Html$Attributes$class('pick')
 										]),
 									_Utils_ap(
-										A3($author$project$Main$guessesTds, 1, model.j, model.b),
+										A3($author$project$Main$guessesTds, 1, model.k, model.b),
 										_List_fromArray(
 											[
 												A2(
 												$elm$html$Html$td,
 												_List_Nil,
-												model.v ? _List_fromArray(
+												model.u ? _List_fromArray(
 													[
 														$elm$html$Html$text(
 														$author$project$Main$colorShow(
-															A2($author$project$Main$getFromRow, model.u, 1)))
+															A2($author$project$Main$getFromRow, model.g, 1)))
 													]) : _List_fromArray(
 													[
 														$elm$html$Html$text('❓')
@@ -6553,17 +6689,17 @@ var $author$project$Main$view = function (model) {
 											$elm$html$Html$Attributes$class('pick')
 										]),
 									_Utils_ap(
-										A3($author$project$Main$guessesTds, 2, model.j, model.b),
+										A3($author$project$Main$guessesTds, 2, model.k, model.b),
 										_List_fromArray(
 											[
 												A2(
 												$elm$html$Html$td,
 												_List_Nil,
-												model.v ? _List_fromArray(
+												model.u ? _List_fromArray(
 													[
 														$elm$html$Html$text(
 														$author$project$Main$colorShow(
-															A2($author$project$Main$getFromRow, model.u, 2)))
+															A2($author$project$Main$getFromRow, model.g, 2)))
 													]) : _List_fromArray(
 													[
 														$elm$html$Html$text('❓')
@@ -6576,17 +6712,17 @@ var $author$project$Main$view = function (model) {
 											$elm$html$Html$Attributes$class('pick')
 										]),
 									_Utils_ap(
-										A3($author$project$Main$guessesTds, 3, model.j, model.b),
+										A3($author$project$Main$guessesTds, 3, model.k, model.b),
 										_List_fromArray(
 											[
 												A2(
 												$elm$html$Html$td,
 												_List_Nil,
-												model.v ? _List_fromArray(
+												model.u ? _List_fromArray(
 													[
 														$elm$html$Html$text(
 														$author$project$Main$colorShow(
-															A2($author$project$Main$getFromRow, model.u, 3)))
+															A2($author$project$Main$getFromRow, model.g, 3)))
 													]) : _List_fromArray(
 													[
 														$elm$html$Html$text('❓')
@@ -6599,7 +6735,7 @@ var $author$project$Main$view = function (model) {
 											$elm$html$Html$Attributes$class('pick')
 										]),
 									_Utils_ap(
-										A2($author$project$Main$mkSubmitRows, model.b, model.j),
+										A2($author$project$Main$mkSubmitRows, model.b, model.k),
 										_List_fromArray(
 											[
 												A2(
@@ -6620,10 +6756,25 @@ var $author$project$Main$view = function (model) {
 													]))
 											])))
 								]))
-						]))
+						])),
+					A2(
+					$elm$html$Html$ol,
+					_List_Nil,
+					A2(
+						$elm$core$List$map,
+						function (historyEntry) {
+							return A2(
+								$elm$html$Html$li,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										$author$project$Main$showHistory(historyEntry))
+									]));
+						},
+						model.v))
 				])));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{bd: $author$project$Main$init, bu: $author$project$Main$subscriptions, by: $author$project$Main$update, bz: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
+	{bf: $author$project$Main$init, bw: $author$project$Main$subscriptions, bA: $author$project$Main$update, bB: $author$project$Main$view});
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)(0)}});}(this));

@@ -4,7 +4,7 @@
     <style>
       body {
         font-family: Sans-serif;
-        font-size: 2em;
+        font-size: 1em;
         background-color: white;
         color: black;
       }
@@ -93,8 +93,15 @@
         e.preventDefault();
         return "";
       });
-      var app = Elm.Main.init({ node: document.querySelector("main") });
-      // you can use ports and stuff here
+
+      var app = Elm.Main.init({
+        node: document.querySelector("main"),
+        flags: JSON.parse(localStorage.getItem("history") || [])
+      });
+
+      app.ports.writeHistory.subscribe(function(message) {
+        localStorage.setItem("history", JSON.stringify(message))
+      });
     </script>
   </body>
 </html>

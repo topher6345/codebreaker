@@ -1,10 +1,12 @@
-module Main exposing (Color(..), Feedback, Hint(..), Row(..), detectCorrectPosition, main, mkFeedback)
+port module Main exposing (Color(..), Feedback, Hint(..), Row(..), detectCorrectPosition, main, mkFeedback)
 
 import Array exposing (Array(..))
 import Browser
 import Html exposing (Html, button, div, table, tbody, td, text, tr)
 import Html.Attributes exposing (attribute, class)
 import Html.Events exposing (onClick, onInput)
+import Json.Decode as D
+import Json.Encode as E
 import List.Extra
 import Maybe exposing (Maybe(..))
 import Random
@@ -73,6 +75,16 @@ mkColor string =
 
 type Row
     = Row Color Color Color Color
+
+
+rowToString (Row a b c d) =
+    colorShow a
+        ++ " "
+        ++ colorShow b
+        ++ " "
+        ++ colorShow c
+        ++ " "
+        ++ colorShow d
 
 
 blankRow : Row
@@ -288,6 +300,13 @@ currentRoundDisplay currentRound =
     String.fromInt (8 - currentRound) ++ " rounds left."
 
 
+type alias HistoryEntry =
+    { win : Bool
+    , rounds : Int
+    , pick : String
+    }
+
+
 type alias Model =
     { currentRound : Int
     , row : Row
@@ -295,6 +314,7 @@ type alias Model =
     , pick : Row
     , reveal : Bool
     , flash : String
+    , history : List HistoryEntry
     , showNewGameModal : Bool
     }
 
@@ -307,6 +327,7 @@ initialModel =
     , guesses = initGuesses
     , flash = "Welcome to Codebreaker!"
     , reveal = False
+    , history = []
     , showNewGameModal = False
     }
 
@@ -319,6 +340,7 @@ type Msg
     | NewGame
     | ShowNewGameModal
     | DismissNewGameConfirmationModal
+    | ClearHistory
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -374,16 +396,27 @@ update msg model =
             in
             case ( feedback.correctColorPosition == 4, currentRound > 8 ) of
                 ( True, False ) ->
-                    ( { model | flash = "You win!", reveal = True, currentRound = currentRound, guesses = newGuesses }, Cmd.none )
+                    let
+                        history =
+                            [ { win = True, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
+                    in
+                    ( { model | flash = "You win!", reveal = True, currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
                 ( False, True ) ->
-                    ( { model | flash = "You Lose", currentRound = currentRound, guesses = newGuesses }, Cmd.none )
+                    let
+                        history =
+                            [ { win = False, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
+                    in
+                    ( { model | flash = "You Lose", currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
                 _ ->
                     ( { model | flash = feedbackToString feedback ++ currentRoundDisplay currentRound, currentRound = currentRound, guesses = newGuesses }, Cmd.none )
 
         Cheat ->
             ( { model | reveal = True }, Cmd.none )
+
+        ClearHistory ->
+            ( { model | history = [] }, writeHistory (encode []) )
 
 
 choice : Array Guess -> RowIndex -> Bool -> Int -> Html Msg
@@ -540,6 +573,7 @@ view model =
 
                  else
                     button [ onClick ShowNewGameModal ] [ text "New Game" ]
+               , button [ onClick ClearHistory ] [ text "Clear History" ]
                , table []
                     [ tbody [ class "hint" ]
                         [ hintsTr model.guesses ]
@@ -590,7 +624,23 @@ view model =
                                    ]
                         ]
                     ]
+               , Html.ol
+                    []
+                 <|
+                    List.map (\historyEntry -> Html.li [] [ text <| showHistory historyEntry ]) model.history
                ]
+
+
+showHistory { win, rounds, pick } =
+    let
+        message =
+            if win then
+                "You won in "
+
+            else
+                "You lost in "
+    in
+    message ++ String.fromInt rounds ++ " rounds. " ++ pick
 
 
 
@@ -602,9 +652,36 @@ subscriptions _ =
     Sub.none
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( initialModel
+encode : List HistoryEntry -> E.Value
+encode history =
+    E.list
+        (\h ->
+            E.object
+                [ ( "win", E.bool h.win )
+                , ( "rounds", E.int h.rounds )
+                , ( "pick", E.string h.pick )
+                ]
+        )
+        history
+
+
+decoder : D.Decoder (Array HistoryEntry)
+decoder =
+    D.array <|
+        D.map3 HistoryEntry
+            (D.field "win" D.bool)
+            (D.field "rounds" D.int)
+            (D.field "pick" D.string)
+
+
+init : E.Value -> ( Model, Cmd Msg )
+init flags =
+    ( case D.decodeValue decoder flags of
+        Ok history ->
+            { initialModel | history = Array.toList history }
+
+        Err message ->
+            { initialModel | flash = "Error loading history: " ++ D.errorToString message }
     , Random.generate Roll roll
     )
 
@@ -619,7 +696,10 @@ roll =
     Random.map4 Row randColor randColor randColor randColor
 
 
-main : Program () Model Msg
+port writeHistory : E.Value -> Cmd msg
+
+
+main : Program E.Value Model Msg
 main =
     Browser.element
         { init = init
