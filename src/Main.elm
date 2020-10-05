@@ -48,31 +48,6 @@ colorShow color =
             ""
 
 
-colorString : Color -> String
-colorString color =
-    case color of
-        Red ->
-            "Red"
-
-        Blue ->
-            "Blue"
-
-        Green ->
-            "Green"
-
-        Yellow ->
-            "Yellow"
-
-        Pink ->
-            "Pink"
-
-        White ->
-            "White"
-
-        None ->
-            "None"
-
-
 mkColor : String -> Color
 mkColor string =
     case string of
@@ -103,13 +78,13 @@ type Row
 
 
 rowToString (Row a b c d) =
-    colorString a
+    colorShow a
         ++ " "
-        ++ colorString b
+        ++ colorShow b
         ++ " "
-        ++ colorString c
+        ++ colorShow c
         ++ " "
-        ++ colorString d
+        ++ colorShow d
 
 
 blankRow : Row
@@ -365,6 +340,7 @@ type Msg
     | NewGame
     | ShowNewGameModal
     | DismissNewGameConfirmationModal
+    | ClearHistory
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -420,16 +396,27 @@ update msg model =
             in
             case ( feedback.correctColorPosition == 4, currentRound > 8 ) of
                 ( True, False ) ->
-                    ( { model | flash = "You win!", reveal = True, currentRound = currentRound, guesses = newGuesses }, writeHistory (encode <| ([ { win = True, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history)) )
+                    let
+                        history =
+                            [ { win = True, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
+                    in
+                    ( { model | flash = "You win!", reveal = True, currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
                 ( False, True ) ->
-                    ( { model | flash = "You Lose", currentRound = currentRound, guesses = newGuesses }, writeHistory (encode <| ([ { win = False, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history)) )
+                    let
+                        history =
+                            [ { win = False, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
+                    in
+                    ( { model | flash = "You Lose", currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
                 _ ->
                     ( { model | flash = feedbackToString feedback ++ currentRoundDisplay currentRound, currentRound = currentRound, guesses = newGuesses }, Cmd.none )
 
         Cheat ->
             ( { model | reveal = True }, Cmd.none )
+
+        ClearHistory ->
+            ( { model | history = [] }, writeHistory (encode []) )
 
 
 choice : Array Guess -> RowIndex -> Bool -> Int -> Html Msg
@@ -586,6 +573,7 @@ view model =
 
                  else
                     button [ onClick ShowNewGameModal ] [ text "New Game" ]
+               , button [ onClick ClearHistory ] [ text "Clear History" ]
                , table []
                     [ tbody [ class "hint" ]
                         [ hintsTr model.guesses ]
@@ -636,7 +624,23 @@ view model =
                                    ]
                         ]
                     ]
+               , Html.ol
+                    []
+                 <|
+                    List.map (\historyEntry -> Html.li [] [ text <| showHistory historyEntry ]) model.history
                ]
+
+
+showHistory { win, rounds, pick } =
+    let
+        message =
+            if win then
+                "You won in "
+
+            else
+                "You lost in "
+    in
+    message ++ String.fromInt rounds ++ " rounds. " ++ pick
 
 
 
@@ -674,10 +678,10 @@ init : E.Value -> ( Model, Cmd Msg )
 init flags =
     ( case D.decodeValue decoder flags of
         Ok history ->
-            { initialModel | history = Array.toList history, flash = "Loaded Hisstory" }
+            { initialModel | history = Array.toList history }
 
-        Err _ ->
-            { initialModel | flash = "error Hisstory" }
+        Err message ->
+            { initialModel | flash = "Error loading history: " ++ D.errorToString message }
     , Random.generate Roll roll
     )
 
