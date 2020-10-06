@@ -98,13 +98,15 @@
         return "";
       });
 
+      const historyKey = "codbreaker:history"
+
       var app = Elm.Main.init({
         node: document.querySelector("main"),
-        flags: JSON.parse(localStorage.getItem("history") || "[]"),
+        flags: JSON.parse(localStorage.getItem(historyKey) || "[]"),
       });
 
       app.ports.writeHistory.subscribe(function (message) {
-        localStorage.setItem("history", JSON.stringify(message));
+        localStorage.setItem(historyKey, JSON.stringify(message));
       });
     </script>
   </body>
