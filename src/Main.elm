@@ -670,6 +670,7 @@ view model =
                            ]
                 ]
             ]
+        , Html.h2 [] [ text "Game History" ]
         , Html.ol
             []
           <|
