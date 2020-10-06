@@ -520,8 +520,8 @@ hintsTr guesses =
     tr [] (List.range 0 7 |> List.map mkTd)
 
 
-guessesTds : RowIndex -> Int -> Array Guess -> Bool -> List (Html Msg)
-guessesTds rowIndex currentRound guesses gameOver =
+guessesTds : RowIndex -> Model -> List (Html Msg)
+guessesTds rowIndex { currentRound, guesses, gameOver } =
     let
         mkTd index =
             td [] [ choice guesses rowIndex (currentRound /= index || gameOver) index ]
@@ -587,6 +587,47 @@ clearHistoryConfirmModal showNewGameModal =
         ]
 
 
+pickRow rowIndex model =
+    tr [ class "pick" ] <|
+        guessesTds rowIndex model
+            ++ [ td []
+                    (if model.reveal then
+                        [ text <| colorShow <| getFromRow model.pick rowIndex ]
+
+                     else
+                        [ text "❓" ]
+                    )
+               ]
+
+
+gameBoard model =
+    table []
+        [ tbody [ class "hint" ]
+            [ hintsTr model.guesses ]
+        , tbody []
+            [ pickRow First model
+            , pickRow Second model
+            , pickRow Third model
+            , pickRow Fourth model
+            , tr [ class "pick" ] <|
+                mkSubmitRows model.guesses model.currentRound
+                    ++ [ td []
+                            [ button
+                                ([ onClick Cheat ]
+                                    ++ (if model.reveal then
+                                            [ attribute "disabled" "true" ]
+
+                                        else
+                                            []
+                                       )
+                                )
+                                [ text "cheat" ]
+                            ]
+                       ]
+            ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     div [ class "root" ]
@@ -609,70 +650,10 @@ view model =
                 ]
                 [ text "New Game" ]
         , button [ onClick ShowClearHistoryModal ] [ text "Clear History" ]
-        , table []
-            [ tbody [ class "hint" ]
-                [ hintsTr model.guesses ]
-            , tbody []
-                [ tr [ class "pick" ] <|
-                    guessesTds First model.currentRound model.guesses model.gameOver
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick First ]
-
-                                 else
-                                    [ text "❓" ]
-                                )
-                           ]
-                , tr [ class "pick" ] <|
-                    guessesTds Second model.currentRound model.guesses model.gameOver
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick Second ]
-
-                                 else
-                                    [ text "❓" ]
-                                )
-                           ]
-                , tr [ class "pick" ] <|
-                    guessesTds Third model.currentRound model.guesses model.gameOver
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick Third ]
-
-                                 else
-                                    [ text "❓" ]
-                                )
-                           ]
-                , tr [ class "pick" ] <|
-                    guessesTds Fourth model.currentRound model.guesses model.gameOver
-                        ++ [ td []
-                                (if model.reveal then
-                                    [ text <| colorShow <| getFromRow model.pick Fourth ]
-
-                                 else
-                                    [ text "❓" ]
-                                )
-                           ]
-                , tr [ class "pick" ] <|
-                    mkSubmitRows model.guesses model.currentRound
-                        ++ [ td []
-                                [ button
-                                    ([ onClick Cheat ]
-                                        ++ (if model.reveal then
-                                                [ attribute "disabled" "true" ]
-
-                                            else
-                                                []
-                                           )
-                                    )
-                                    [ text "cheat" ]
-                                ]
-                           ]
-                ]
-            ]
+        , gameBoard model
         , Html.h2 [] [ text "Game History" ]
         , Html.ol
-            []
+            [ attribute "reversed" "reversed" ]
           <|
             List.map (\historyEntry -> Html.li [] [ text <| showHistory historyEntry ]) model.history
         ]
