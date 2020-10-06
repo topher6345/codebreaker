@@ -3,7 +3,7 @@ port module Main exposing (Color(..), Feedback, Hint(..), Row(..), detectCorrect
 import Array exposing (Array(..))
 import Browser
 import Html exposing (Html, button, div, table, tbody, td, text, tr)
-import Html.Attributes exposing (attribute, class)
+import Html.Attributes exposing (attribute, class, style)
 import Html.Events exposing (onClick, onInput)
 import Json.Decode as D
 import Json.Encode as E
@@ -316,6 +316,7 @@ type alias Model =
     , flash : String
     , history : List HistoryEntry
     , showNewGameModal : Bool
+    , showClearHistoryModal : Bool
     , gameOver : Bool
     }
 
@@ -330,6 +331,7 @@ initialModel =
     , reveal = False
     , history = []
     , showNewGameModal = False
+    , showClearHistoryModal = False
     , gameOver = False
     }
 
@@ -343,6 +345,8 @@ type Msg
     | ShowNewGameModal
     | DismissNewGameConfirmationModal
     | ClearHistory
+    | ShowClearHistoryModal
+    | DismissClearHistoryConfirmationModal
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -363,10 +367,16 @@ update msg model =
             )
 
         DismissNewGameConfirmationModal ->
-            ( { model | showNewGameModal = False, guesses = model.guesses }, Cmd.none )
+            ( { model | showNewGameModal = False }, Cmd.none )
 
         ShowNewGameModal ->
             ( { model | showNewGameModal = True }, Cmd.none )
+
+        DismissClearHistoryConfirmationModal ->
+            ( { model | showClearHistoryModal = False }, Cmd.none )
+
+        ShowClearHistoryModal ->
+            ( { model | showClearHistoryModal = True }, Cmd.none )
 
         UpdateColor rowIndex colIndex string ->
             ( { model
@@ -419,7 +429,7 @@ update msg model =
             ( { model | reveal = True }, Cmd.none )
 
         ClearHistory ->
-            ( { model | history = [] }, writeHistory (encode []) )
+            ( { model | history = [], showClearHistoryModal = False }, writeHistory (encode []) )
 
 
 choice : Array Guess -> RowIndex -> Bool -> Int -> Html Msg
@@ -543,8 +553,17 @@ showGuess { currentRound, guesses, pick, reveal } rowIndex =
                ]
 
 
-newGameConfirmModal =
-    div [ class "new-game-confirm-modal" ]
+newGameConfirmModal showNewGameModal =
+    div
+        [ class "new-game-confirm-modal"
+        , style "display"
+            (if showNewGameModal then
+                "flex"
+
+             else
+                "none"
+            )
+        ]
         [ Html.h2 []
             [ text "Are you sure?"
             , Html.p []
@@ -557,90 +576,106 @@ newGameConfirmModal =
         ]
 
 
+clearHistoryConfirmModal showNewGameModal =
+    div
+        [ class "new-game-confirm-modal"
+        , style "display"
+            (if showNewGameModal then
+                "flex"
+
+             else
+                "none"
+            )
+        ]
+        [ Html.h2 []
+            [ text "Are you sure?"
+            , Html.p []
+                [ text "This will permanently erase your game history" ]
+            , button
+                [ onClick ClearHistory ]
+                [ text "Yes" ]
+            , button [ onClick DismissClearHistoryConfirmationModal ] [ text "Cancel" ]
+            ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
-    div
-        [ class "root"
-        ]
-    <|
-        (if model.showNewGameModal then
-            [ newGameConfirmModal ]
+    div [ class "root" ]
+        [ newGameConfirmModal model.showNewGameModal
+        , clearHistoryConfirmModal model.showClearHistoryModal
+        , Html.h1 [] [ text "Codebreaker" ]
+        , Html.p [] [ text model.flash ]
+        , if model.guesses == initialModel.guesses then
+            button [ attribute "disabled" "true" ] [ text "New Game" ]
 
-         else
+          else
+            button
+                [ onClick
+                    (if model.gameOver then
+                        NewGame
+
+                     else
+                        ShowNewGameModal
+                    )
+                ]
+                [ text "New Game" ]
+        , button [ onClick ShowClearHistoryModal ] [ text "Clear History" ]
+        , table []
+            [ tbody [ class "hint" ]
+                [ hintsTr model.guesses ]
+            , tbody []
+                [ tr [ class "pick" ] <|
+                    guessesTds First model.currentRound model.guesses
+                        ++ [ td []
+                                (if model.reveal then
+                                    [ text <| colorShow <| getFromRow model.pick First ]
+
+                                 else
+                                    [ text "❓" ]
+                                )
+                           ]
+                , tr [ class "pick" ] <|
+                    guessesTds Second model.currentRound model.guesses
+                        ++ [ td []
+                                (if model.reveal then
+                                    [ text <| colorShow <| getFromRow model.pick Second ]
+
+                                 else
+                                    [ text "❓" ]
+                                )
+                           ]
+                , tr [ class "pick" ] <|
+                    guessesTds Third model.currentRound model.guesses
+                        ++ [ td []
+                                (if model.reveal then
+                                    [ text <| colorShow <| getFromRow model.pick Third ]
+
+                                 else
+                                    [ text "❓" ]
+                                )
+                           ]
+                , tr [ class "pick" ] <|
+                    guessesTds Fourth model.currentRound model.guesses
+                        ++ [ td []
+                                (if model.reveal then
+                                    [ text <| colorShow <| getFromRow model.pick Fourth ]
+
+                                 else
+                                    [ text "❓" ]
+                                )
+                           ]
+                , tr [ class "pick" ] <|
+                    mkSubmitRows model.guesses model.currentRound
+                        ++ [ td [] [ button [ onClick Cheat ] [ text "cheat" ] ]
+                           ]
+                ]
+            ]
+        , Html.ol
             []
-        )
-            ++ [ Html.h1 [] [ text "Codebreaker" ]
-               , Html.p [] [ text model.flash ]
-               , if model.guesses == initialModel.guesses then
-                    button [ attribute "disabled" "true" ] [ text "New Game" ]
-
-                 else
-                    button
-                        [ onClick
-                            (if model.gameOver then
-                                NewGame
-
-                             else
-                                ShowNewGameModal
-                            )
-                        ]
-                        [ text "New Game" ]
-               , button [ onClick ClearHistory ] [ text "Clear History" ]
-               , table []
-                    [ tbody [ class "hint" ]
-                        [ hintsTr model.guesses ]
-                    , tbody []
-                        [ tr [ class "pick" ] <|
-                            guessesTds First model.currentRound model.guesses
-                                ++ [ td []
-                                        (if model.reveal then
-                                            [ text <| colorShow <| getFromRow model.pick First ]
-
-                                         else
-                                            [ text "❓" ]
-                                        )
-                                   ]
-                        , tr [ class "pick" ] <|
-                            guessesTds Second model.currentRound model.guesses
-                                ++ [ td []
-                                        (if model.reveal then
-                                            [ text <| colorShow <| getFromRow model.pick Second ]
-
-                                         else
-                                            [ text "❓" ]
-                                        )
-                                   ]
-                        , tr [ class "pick" ] <|
-                            guessesTds Third model.currentRound model.guesses
-                                ++ [ td []
-                                        (if model.reveal then
-                                            [ text <| colorShow <| getFromRow model.pick Third ]
-
-                                         else
-                                            [ text "❓" ]
-                                        )
-                                   ]
-                        , tr [ class "pick" ] <|
-                            guessesTds Fourth model.currentRound model.guesses
-                                ++ [ td []
-                                        (if model.reveal then
-                                            [ text <| colorShow <| getFromRow model.pick Fourth ]
-
-                                         else
-                                            [ text "❓" ]
-                                        )
-                                   ]
-                        , tr [ class "pick" ] <|
-                            mkSubmitRows model.guesses model.currentRound
-                                ++ [ td [] [ button [ onClick Cheat ] [ text "cheat" ] ]
-                                   ]
-                        ]
-                    ]
-               , Html.ol
-                    []
-                 <|
-                    List.map (\historyEntry -> Html.li [] [ text <| showHistory historyEntry ]) model.history
-               ]
+          <|
+            List.map (\historyEntry -> Html.li [] [ text <| showHistory historyEntry ]) model.history
+        ]
 
 
 showHistory { win, rounds, pick } =
