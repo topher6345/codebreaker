@@ -2704,7 +2704,7 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		B: func(record.B),
+		A: func(record.A),
 		am: record.am,
 		ai: record.ai
 	}
@@ -2974,7 +2974,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.B;
+		var message = !tag ? value : tag < 3 ? value.a : value.A;
 		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.am;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
@@ -4844,25 +4844,25 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.c) {
+		if (!builder.b) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.e),
+				$elm$core$Elm$JsArray$length(builder.d),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.e);
+				builder.d);
 		} else {
-			var treeLen = builder.c * $elm$core$Array$branchFactor;
+			var treeLen = builder.b * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.f) : builder.f;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.c);
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.e) : builder.e;
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.b);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.e) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.d) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.e);
+				builder.d);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -4875,7 +4875,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{f: nodeList, c: (len / $elm$core$Array$branchFactor) | 0, e: tail});
+					{e: nodeList, b: (len / $elm$core$Array$branchFactor) | 0, d: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -5227,7 +5227,7 @@ var $author$project$Main$Roll = function (a) {
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$HistoryEntry = F4(
 	function (win, rounds, pick, cheat) {
-		return {P: cheat, h: pick, V: rounds, _: win};
+		return {P: cheat, k: pick, V: rounds, _: win};
 	});
 var $elm$json$Json$Decode$array = _Json_decodeArray;
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
@@ -5361,13 +5361,13 @@ var $elm$core$Array$repeat = F2(
 	});
 var $author$project$Main$initGuesses = A2($elm$core$Array$repeat, 8, $author$project$Main$initGuess);
 var $author$project$Main$initialModel = {
-	k: 0,
-	A: 'Welcome to Codebreaker!',
-	t: false,
-	b: $author$project$Main$initGuesses,
-	w: _List_Nil,
-	h: A4($author$project$Main$Row, 0, 0, 0, 0),
-	r: false,
+	r: 0,
+	z: 'Welcome to Codebreaker!',
+	E: false,
+	g: $author$project$Main$initGuesses,
+	u: _List_Nil,
+	k: A4($author$project$Main$Row, 0, 0, 0, 0),
+	w: false,
 	aj: $author$project$Main$blankRow,
 	K: false,
 	L: false
@@ -5498,14 +5498,14 @@ var $author$project$Main$init = function (flags) {
 				return _Utils_update(
 					$author$project$Main$initialModel,
 					{
-						w: $elm$core$Array$toList(history)
+						u: $elm$core$Array$toList(history)
 					});
 			} else {
 				var message = _v0.a;
 				return _Utils_update(
 					$author$project$Main$initialModel,
 					{
-						A: 'Error loading history: ' + $elm$json$Json$Decode$errorToString(message)
+						z: 'Error loading history: ' + $elm$json$Json$Decode$errorToString(message)
 					});
 			}
 		}(),
@@ -5559,7 +5559,7 @@ var $author$project$Main$encode = function (history) {
 						$elm$json$Json$Encode$int(h.V)),
 						_Utils_Tuple2(
 						'pick',
-						$elm$json$Json$Encode$string(h.h)),
+						$elm$json$Json$Encode$string(h.k)),
 						_Utils_Tuple2(
 						'cheat',
 						$elm$json$Json$Encode$bool(h.P))
@@ -5916,12 +5916,12 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							k: 0,
-							A: 'Welcome to Codebreaker!',
-							t: false,
-							b: $author$project$Main$initGuesses,
-							h: A4($author$project$Main$Row, 0, 0, 0, 0),
-							r: false,
+							r: 0,
+							z: 'Welcome to Codebreaker!',
+							E: false,
+							g: $author$project$Main$initGuesses,
+							k: A4($author$project$Main$Row, 0, 0, 0, 0),
+							w: false,
 							aj: $author$project$Main$blankRow,
 							L: false
 						}),
@@ -5958,11 +5958,11 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							b: A3(
+							g: A3(
 								$elm$core$Array$set,
 								colIndex,
-								A4($author$project$Main$updateRowColor, model.b, rowIndex, string, colIndex),
-								model.b)
+								A4($author$project$Main$updateRowColor, model.g, rowIndex, string, colIndex),
+								model.g)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 1:
@@ -5970,22 +5970,22 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{h: pick}),
+						{k: pick}),
 					$elm$core$Platform$Cmd$none);
 			case 2:
-				var index = model.k;
-				var currentRound = model.k + 1;
+				var index = model.r;
+				var currentRound = model.r + 1;
 				var _v1 = A2(
 					$elm$core$Maybe$withDefault,
 					$author$project$Main$initGuess,
-					A2($elm$core$Array$get, index, model.b));
+					A2($elm$core$Array$get, index, model.g));
 				var row = _v1.b;
-				var feedback = A2($author$project$Main$mkFeedback, row, model.h);
+				var feedback = A2($author$project$Main$mkFeedback, row, model.k);
 				var newGuesses = A3(
 					$elm$core$Array$set,
 					index,
 					_Utils_Tuple2(feedback, row),
-					model.b);
+					model.g);
 				var _v2 = _Utils_Tuple2(feedback.I === 4, currentRound > 8);
 				_v2$2:
 				while (true) {
@@ -5995,17 +5995,17 @@ var $author$project$Main$update = F2(
 								_List_fromArray(
 									[
 										{
-										P: model.r,
-										h: $author$project$Main$rowToString(model.h),
+										P: model.w,
+										k: $author$project$Main$rowToString(model.k),
 										V: currentRound,
 										_: true
 									}
 									]),
-								model.w);
+								model.u);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{k: currentRound, A: 'You win!', t: true, b: newGuesses, w: history, r: true}),
+									{r: currentRound, z: 'You win!', E: true, g: newGuesses, u: history, w: true}),
 								$author$project$Main$writeHistory(
 									$author$project$Main$encode(history)));
 						} else {
@@ -6017,17 +6017,17 @@ var $author$project$Main$update = F2(
 								_List_fromArray(
 									[
 										{
-										P: model.r,
-										h: $author$project$Main$rowToString(model.h),
+										P: model.w,
+										k: $author$project$Main$rowToString(model.k),
 										V: currentRound,
 										_: false
 									}
 									]),
-								model.w);
+								model.u);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{k: currentRound, A: 'You Lose', t: true, b: newGuesses, w: history}),
+									{r: currentRound, z: 'You Lose', E: true, g: newGuesses, u: history}),
 								$author$project$Main$writeHistory(
 									$author$project$Main$encode(history)));
 						} else {
@@ -6039,37 +6039,32 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							k: currentRound,
-							A: _Utils_ap(
+							r: currentRound,
+							z: _Utils_ap(
 								$author$project$Main$feedbackToString(feedback),
 								$author$project$Main$currentRoundDisplay(currentRound)),
-							b: newGuesses
+							g: newGuesses
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 3:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{r: true}),
+						{w: true}),
 					$elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{w: _List_Nil, K: false}),
+						{u: _List_Nil, K: false}),
 					$author$project$Main$writeHistory(
 						$author$project$Main$encode(_List_Nil)));
 		}
 	});
 var $elm$json$Json$Decode$value = _Json_decodeValue;
-var $author$project$Main$Cheat = {$: 3};
-var $author$project$Main$First = 0;
-var $author$project$Main$Fourth = 3;
 var $author$project$Main$NewGame = {$: 4};
-var $author$project$Main$Second = 1;
 var $author$project$Main$ShowClearHistoryModal = {$: 8};
 var $author$project$Main$ShowNewGameModal = {$: 5};
-var $author$project$Main$Third = 2;
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -6162,6 +6157,266 @@ var $author$project$Main$clearHistoryConfirmModal = function (showNewGameModal) 
 					]))
 			]));
 };
+var $author$project$Main$Cheat = {$: 3};
+var $author$project$Main$First = 0;
+var $author$project$Main$Fourth = 3;
+var $author$project$Main$Second = 1;
+var $author$project$Main$Third = 2;
+var $author$project$Main$Empty = 2;
+var $elm$core$Array$fromListHelp = F3(
+	function (list, nodeList, nodeListSize) {
+		fromListHelp:
+		while (true) {
+			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
+			var jsArray = _v0.a;
+			var remainingItems = _v0.b;
+			if (_Utils_cmp(
+				$elm$core$Elm$JsArray$length(jsArray),
+				$elm$core$Array$branchFactor) < 0) {
+				return A2(
+					$elm$core$Array$builderToArray,
+					true,
+					{e: nodeList, b: nodeListSize, d: jsArray});
+			} else {
+				var $temp$list = remainingItems,
+					$temp$nodeList = A2(
+					$elm$core$List$cons,
+					$elm$core$Array$Leaf(jsArray),
+					nodeList),
+					$temp$nodeListSize = nodeListSize + 1;
+				list = $temp$list;
+				nodeList = $temp$nodeList;
+				nodeListSize = $temp$nodeListSize;
+				continue fromListHelp;
+			}
+		}
+	});
+var $elm$core$Array$fromList = function (list) {
+	if (!list.b) {
+		return $elm$core$Array$empty;
+	} else {
+		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
+	}
+};
+var $author$project$Main$CorrectColor = 1;
+var $author$project$Main$CorrectColorPosition = 0;
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2($elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var $elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
+var $author$project$Main$hintTableList = function (_v0) {
+	var correctColorPosition = _v0.I;
+	var correctColor = _v0.Q;
+	var empty = _v0.R;
+	var empties = A2($elm$core$List$repeat, empty, 2);
+	var correct = A2($elm$core$List$repeat, correctColorPosition, 0);
+	var color = A2($elm$core$List$repeat, correctColor, 1);
+	var values = $elm$core$List$concat(
+		_List_fromArray(
+			[correct, color, empties]));
+	var length = $elm$core$List$length(values);
+	return (length < 4) ? _Utils_ap(
+		values,
+		A2($elm$core$List$repeat, 4 - length, 2)) : values;
+};
+var $author$project$Main$showHint = function (hint) {
+	switch (hint) {
+		case 0:
+			return '◾️';
+		case 1:
+			return '◽️';
+		default:
+			return '☐';
+	}
+};
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $elm$html$Html$tbody = _VirtualDom_node('tbody');
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $elm$html$Html$tr = _VirtualDom_node('tr');
+var $author$project$Main$hintTable = function (feedback) {
+	var array = $elm$core$Array$fromList(
+		$author$project$Main$hintTableList(feedback));
+	var mkText = function (index) {
+		return $elm$html$Html$text(
+			$author$project$Main$showHint(
+				A2(
+					$elm$core$Maybe$withDefault,
+					2,
+					A2($elm$core$Array$get, index, array))));
+	};
+	return _List_fromArray(
+		[
+			A2(
+			$elm$html$Html$table,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$tbody,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$tr,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											mkText(0)
+										])),
+									A2(
+									$elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											mkText(1)
+										]))
+								])),
+							A2(
+							$elm$html$Html$tr,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											mkText(2)
+										])),
+									A2(
+									$elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											mkText(3)
+										]))
+								]))
+						]))
+				]))
+		]);
+};
+var $author$project$Main$mkHintTable = F2(
+	function (index, guesses) {
+		var _v0 = A2($elm$core$Array$get, index, guesses);
+		if (!_v0.$) {
+			var _v1 = _v0.a;
+			var feedback = _v1.a;
+			return $author$project$Main$hintTable(feedback);
+		} else {
+			return _List_Nil;
+		}
+	});
+var $author$project$Main$hintsTr = function (guesses) {
+	var mkTd = function (index) {
+		return A2(
+			$elm$html$Html$td,
+			_List_Nil,
+			A2($author$project$Main$mkHintTable, index, guesses));
+	};
+	return A2(
+		$elm$html$Html$tr,
+		_List_Nil,
+		A2(
+			$elm$core$List$map,
+			mkTd,
+			A2($elm$core$List$range, 0, 7)));
+};
+var $author$project$Main$Submit = {$: 2};
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$Basics$not = _Basics_not;
+var $elm$core$List$all = F2(
+	function (isOkay, list) {
+		return !A2(
+			$elm$core$List$any,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
+			list);
+	});
+var $author$project$Main$nonEmptyRow = function (_v0) {
+	var a = _v0.a;
+	var b = _v0.b;
+	var c = _v0.c;
+	var d = _v0.d;
+	return A2(
+		$elm$core$List$all,
+		$elm$core$Basics$neq(6),
+		_List_fromArray(
+			[a, b, c, d]));
+};
+var $author$project$Main$submitable = F3(
+	function (guesses, index, colIndex) {
+		var _v0 = A2(
+			$elm$core$Maybe$withDefault,
+			$author$project$Main$initGuess,
+			A2($elm$core$Array$get, index, guesses));
+		var row = _v0.b;
+		return ($author$project$Main$nonEmptyRow(row) && _Utils_eq(index, colIndex)) ? _List_fromArray(
+			[
+				$elm$html$Html$Events$onClick($author$project$Main$Submit)
+			]) : _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$attribute, 'disabled', 'true')
+			]);
+	});
+var $author$project$Main$mkSubmitRows = F2(
+	function (guesses, currentRound) {
+		var mkTd = function (index) {
+			return A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$button,
+						A3($author$project$Main$submitable, guesses, currentRound, index),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$elm$core$String$fromInt(index + 1))
+							]))
+					]));
+		};
+		return A2(
+			$elm$core$List$map,
+			mkTd,
+			A2($elm$core$List$range, 0, 7));
+	});
 var $author$project$Main$getFromRow = F2(
 	function (row, rowIndex) {
 		var _v0 = _Utils_Tuple2(rowIndex, row);
@@ -6305,9 +6560,11 @@ var $author$project$Main$choice = F4(
 						]))
 				]));
 	});
-var $elm$html$Html$td = _VirtualDom_node('td');
-var $author$project$Main$guessesTds = F4(
-	function (rowIndex, currentRound, guesses, gameOver) {
+var $author$project$Main$guessesTds = F2(
+	function (rowIndex, _v0) {
+		var currentRound = _v0.r;
+		var guesses = _v0.g;
+		var gameOver = _v0.E;
 		var mkTd = function (index) {
 			return A2(
 				$elm$html$Html$td,
@@ -6327,262 +6584,94 @@ var $author$project$Main$guessesTds = F4(
 			mkTd,
 			A2($elm$core$List$range, 0, 7));
 	});
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $author$project$Main$Empty = 2;
-var $elm$core$Array$fromListHelp = F3(
-	function (list, nodeList, nodeListSize) {
-		fromListHelp:
-		while (true) {
-			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
-			var jsArray = _v0.a;
-			var remainingItems = _v0.b;
-			if (_Utils_cmp(
-				$elm$core$Elm$JsArray$length(jsArray),
-				$elm$core$Array$branchFactor) < 0) {
-				return A2(
-					$elm$core$Array$builderToArray,
-					true,
-					{f: nodeList, c: nodeListSize, e: jsArray});
-			} else {
-				var $temp$list = remainingItems,
-					$temp$nodeList = A2(
-					$elm$core$List$cons,
-					$elm$core$Array$Leaf(jsArray),
-					nodeList),
-					$temp$nodeListSize = nodeListSize + 1;
-				list = $temp$list;
-				nodeList = $temp$nodeList;
-				nodeListSize = $temp$nodeListSize;
-				continue fromListHelp;
-			}
-		}
-	});
-var $elm$core$Array$fromList = function (list) {
-	if (!list.b) {
-		return $elm$core$Array$empty;
-	} else {
-		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
-	}
-};
-var $author$project$Main$CorrectColor = 1;
-var $author$project$Main$CorrectColorPosition = 0;
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
-var $elm$core$List$repeatHelp = F3(
-	function (result, n, value) {
-		repeatHelp:
-		while (true) {
-			if (n <= 0) {
-				return result;
-			} else {
-				var $temp$result = A2($elm$core$List$cons, value, result),
-					$temp$n = n - 1,
-					$temp$value = value;
-				result = $temp$result;
-				n = $temp$n;
-				value = $temp$value;
-				continue repeatHelp;
-			}
-		}
-	});
-var $elm$core$List$repeat = F2(
-	function (n, value) {
-		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
-	});
-var $author$project$Main$hintTableList = function (_v0) {
-	var correctColorPosition = _v0.I;
-	var correctColor = _v0.Q;
-	var empty = _v0.R;
-	var empties = A2($elm$core$List$repeat, empty, 2);
-	var correct = A2($elm$core$List$repeat, correctColorPosition, 0);
-	var color = A2($elm$core$List$repeat, correctColor, 1);
-	var values = $elm$core$List$concat(
-		_List_fromArray(
-			[correct, color, empties]));
-	var length = $elm$core$List$length(values);
-	return (length < 4) ? _Utils_ap(
-		values,
-		A2($elm$core$List$repeat, 4 - length, 2)) : values;
-};
-var $author$project$Main$showHint = function (hint) {
-	switch (hint) {
-		case 0:
-			return '◾️';
-		case 1:
-			return '◽️';
-		default:
-			return '☐';
-	}
-};
-var $elm$html$Html$table = _VirtualDom_node('table');
-var $elm$html$Html$tbody = _VirtualDom_node('tbody');
-var $elm$html$Html$tr = _VirtualDom_node('tr');
-var $author$project$Main$hintTable = function (feedback) {
-	var array = $elm$core$Array$fromList(
-		$author$project$Main$hintTableList(feedback));
-	var mkText = function (index) {
-		return $elm$html$Html$text(
-			$author$project$Main$showHint(
-				A2(
-					$elm$core$Maybe$withDefault,
-					2,
-					A2($elm$core$Array$get, index, array))));
-	};
-	return _List_fromArray(
-		[
-			A2(
-			$elm$html$Html$table,
-			_List_Nil,
+var $author$project$Main$pickRow = F2(
+	function (rowIndex, model) {
+		return A2(
+			$elm$html$Html$tr,
 			_List_fromArray(
 				[
-					A2(
-					$elm$html$Html$tbody,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$tr,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											mkText(0)
-										])),
-									A2(
-									$elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											mkText(1)
-										]))
-								])),
-							A2(
-							$elm$html$Html$tr,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											mkText(2)
-										])),
-									A2(
-									$elm$html$Html$td,
-									_List_Nil,
-									_List_fromArray(
-										[
-											mkText(3)
-										]))
-								]))
-						]))
-				]))
-		]);
-};
-var $author$project$Main$mkHintTable = F2(
-	function (index, guesses) {
-		var _v0 = A2($elm$core$Array$get, index, guesses);
-		if (!_v0.$) {
-			var _v1 = _v0.a;
-			var feedback = _v1.a;
-			return $author$project$Main$hintTable(feedback);
-		} else {
-			return _List_Nil;
-		}
-	});
-var $author$project$Main$hintsTr = function (guesses) {
-	var mkTd = function (index) {
-		return A2(
-			$elm$html$Html$td,
-			_List_Nil,
-			A2($author$project$Main$mkHintTable, index, guesses));
-	};
-	return A2(
-		$elm$html$Html$tr,
-		_List_Nil,
-		A2(
-			$elm$core$List$map,
-			mkTd,
-			A2($elm$core$List$range, 0, 7)));
-};
-var $elm$html$Html$li = _VirtualDom_node('li');
-var $author$project$Main$Submit = {$: 2};
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
-var $elm$core$Basics$not = _Basics_not;
-var $elm$core$List$all = F2(
-	function (isOkay, list) {
-		return !A2(
-			$elm$core$List$any,
-			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
-			list);
-	});
-var $author$project$Main$nonEmptyRow = function (_v0) {
-	var a = _v0.a;
-	var b = _v0.b;
-	var c = _v0.c;
-	var d = _v0.d;
-	return A2(
-		$elm$core$List$all,
-		$elm$core$Basics$neq(6),
-		_List_fromArray(
-			[a, b, c, d]));
-};
-var $author$project$Main$submitable = F3(
-	function (guesses, index, colIndex) {
-		var _v0 = A2(
-			$elm$core$Maybe$withDefault,
-			$author$project$Main$initGuess,
-			A2($elm$core$Array$get, index, guesses));
-		var row = _v0.b;
-		return ($author$project$Main$nonEmptyRow(row) && _Utils_eq(index, colIndex)) ? _List_fromArray(
-			[
-				$elm$html$Html$Events$onClick($author$project$Main$Submit)
-			]) : _List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$attribute, 'disabled', 'true')
-			]);
-	});
-var $author$project$Main$mkSubmitRows = F2(
-	function (guesses, currentRound) {
-		var mkTd = function (index) {
-			return A2(
-				$elm$html$Html$td,
-				_List_Nil,
+					$elm$html$Html$Attributes$class('pick')
+				]),
+			_Utils_ap(
+				A2($author$project$Main$guessesTds, rowIndex, model),
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$button,
-						A3($author$project$Main$submitable, guesses, currentRound, index),
-						_List_fromArray(
+						$elm$html$Html$td,
+						_List_Nil,
+						model.w ? _List_fromArray(
 							[
 								$elm$html$Html$text(
-								$elm$core$String$fromInt(index + 1))
+								$author$project$Main$colorShow(
+									A2($author$project$Main$getFromRow, model.k, rowIndex)))
+							]) : _List_fromArray(
+							[
+								$elm$html$Html$text('❓')
 							]))
-					]));
-		};
-		return A2(
-			$elm$core$List$map,
-			mkTd,
-			A2($elm$core$List$range, 0, 7));
+					])));
 	});
+var $author$project$Main$gameBoard = function (model) {
+	return A2(
+		$elm$html$Html$table,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$tbody,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('hint')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$hintsTr(model.g)
+					])),
+				A2(
+				$elm$html$Html$tbody,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2($author$project$Main$pickRow, 0, model),
+						A2($author$project$Main$pickRow, 1, model),
+						A2($author$project$Main$pickRow, 2, model),
+						A2($author$project$Main$pickRow, 3, model),
+						A2(
+						$elm$html$Html$tr,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('pick')
+							]),
+						_Utils_ap(
+							A2($author$project$Main$mkSubmitRows, model.g, model.r),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$button,
+											_Utils_ap(
+												_List_fromArray(
+													[
+														$elm$html$Html$Events$onClick($author$project$Main$Cheat)
+													]),
+												model.w ? _List_fromArray(
+													[
+														A2($elm$html$Html$Attributes$attribute, 'disabled', 'true')
+													]) : _List_Nil),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('cheat')
+												]))
+										]))
+								])))
+					]))
+			]));
+};
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$li = _VirtualDom_node('li');
 var $author$project$Main$DismissNewGameConfirmationModal = {$: 6};
 var $author$project$Main$newGameConfirmModal = function (showNewGameModal) {
 	return A2(
@@ -6637,7 +6726,7 @@ var $elm$html$Html$ol = _VirtualDom_node('ol');
 var $author$project$Main$showHistory = function (_v0) {
 	var win = _v0._;
 	var rounds = _v0.V;
-	var pick = _v0.h;
+	var pick = _v0.k;
 	var cheat = _v0.P;
 	var message = function () {
 		var _v1 = _Utils_Tuple2(win, cheat);
@@ -6676,9 +6765,9 @@ var $author$project$Main$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(model.A)
+						$elm$html$Html$text(model.z)
 					])),
-				_Utils_eq(model.b, $author$project$Main$initialModel.b) ? A2(
+				_Utils_eq(model.g, $author$project$Main$initialModel.g) ? A2(
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
@@ -6692,7 +6781,7 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						model.t ? $author$project$Main$NewGame : $author$project$Main$ShowNewGameModal)
+						model.E ? $author$project$Main$NewGame : $author$project$Main$ShowNewGameModal)
 					]),
 				_List_fromArray(
 					[
@@ -6708,155 +6797,20 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$text('Clear History')
 					])),
+				$author$project$Main$gameBoard(model),
 				A2(
-				$elm$html$Html$table,
+				$elm$html$Html$h2,
 				_List_Nil,
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$tbody,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('hint')
-							]),
-						_List_fromArray(
-							[
-								$author$project$Main$hintsTr(model.b)
-							])),
-						A2(
-						$elm$html$Html$tbody,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$tr,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pick')
-									]),
-								_Utils_ap(
-									A4($author$project$Main$guessesTds, 0, model.k, model.b, model.t),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$td,
-											_List_Nil,
-											model.r ? _List_fromArray(
-												[
-													$elm$html$Html$text(
-													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.h, 0)))
-												]) : _List_fromArray(
-												[
-													$elm$html$Html$text('❓')
-												]))
-										]))),
-								A2(
-								$elm$html$Html$tr,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pick')
-									]),
-								_Utils_ap(
-									A4($author$project$Main$guessesTds, 1, model.k, model.b, model.t),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$td,
-											_List_Nil,
-											model.r ? _List_fromArray(
-												[
-													$elm$html$Html$text(
-													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.h, 1)))
-												]) : _List_fromArray(
-												[
-													$elm$html$Html$text('❓')
-												]))
-										]))),
-								A2(
-								$elm$html$Html$tr,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pick')
-									]),
-								_Utils_ap(
-									A4($author$project$Main$guessesTds, 2, model.k, model.b, model.t),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$td,
-											_List_Nil,
-											model.r ? _List_fromArray(
-												[
-													$elm$html$Html$text(
-													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.h, 2)))
-												]) : _List_fromArray(
-												[
-													$elm$html$Html$text('❓')
-												]))
-										]))),
-								A2(
-								$elm$html$Html$tr,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pick')
-									]),
-								_Utils_ap(
-									A4($author$project$Main$guessesTds, 3, model.k, model.b, model.t),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$td,
-											_List_Nil,
-											model.r ? _List_fromArray(
-												[
-													$elm$html$Html$text(
-													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.h, 3)))
-												]) : _List_fromArray(
-												[
-													$elm$html$Html$text('❓')
-												]))
-										]))),
-								A2(
-								$elm$html$Html$tr,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pick')
-									]),
-								_Utils_ap(
-									A2($author$project$Main$mkSubmitRows, model.b, model.k),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$td,
-											_List_Nil,
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$button,
-													_Utils_ap(
-														_List_fromArray(
-															[
-																$elm$html$Html$Events$onClick($author$project$Main$Cheat)
-															]),
-														model.r ? _List_fromArray(
-															[
-																A2($elm$html$Html$Attributes$attribute, 'disabled', 'true')
-															]) : _List_Nil),
-													_List_fromArray(
-														[
-															$elm$html$Html$text('cheat')
-														]))
-												]))
-										])))
-							]))
+						$elm$html$Html$text('Game History')
 					])),
 				A2(
 				$elm$html$Html$ol,
-				_List_Nil,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'reversed', 'reversed')
+					]),
 				A2(
 					$elm$core$List$map,
 					function (historyEntry) {
@@ -6869,7 +6823,7 @@ var $author$project$Main$view = function (model) {
 									$author$project$Main$showHistory(historyEntry))
 								]));
 					},
-					model.w))
+					model.u))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
