@@ -655,7 +655,18 @@ view model =
                            ]
                 , tr [ class "pick" ] <|
                     mkSubmitRows model.guesses model.currentRound
-                        ++ [ td [] [ button [ onClick Cheat ] [ text "cheat" ] ]
+                        ++ [ td []
+                                [ button
+                                    ([ onClick Cheat ]
+                                        ++ (if model.reveal then
+                                                [ attribute "disabled" "true" ]
+
+                                            else
+                                                []
+                                           )
+                                    )
+                                    [ text "cheat" ]
+                                ]
                            ]
                 ]
             ]
