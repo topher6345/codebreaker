@@ -18,33 +18,37 @@
       }
 
       .pick:nth-of-type(1) > td:last-child {
-        opacity:0;
+        opacity: 0;
         animation: 3s linear 1s forwards fadeIn;
       }
 
       .pick:nth-of-type(2) > td:last-child {
-        opacity:0;
+        opacity: 0;
         animation: 3s linear 2s forwards fadeIn;
       }
 
       .pick:nth-of-type(3) > td:last-child {
-        opacity:0;
+        opacity: 0;
         animation: 3s linear 3s forwards fadeIn;
       }
 
       .pick:nth-of-type(4) > td:last-child {
-        opacity:0;
+        opacity: 0;
         animation: 3s linear 4s forwards fadeIn;
       }
 
       .pick:nth-of-type(5) > td:last-child {
-        opacity:0;
+        opacity: 0;
         animation: 3s linear 5s forwards fadeIn;
       }
 
       @keyframes fadeIn {
-        0% {opacity:0;}
-        100% {opacity:1;}
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
       }
 
       .new-game-confirm-modal {
@@ -57,7 +61,7 @@
         z-index: 9;
         display: flex;
         justify-content: center;
-         align-items: center;
+        align-items: center;
       }
 
       .new-game-confirm-modal p {
@@ -96,11 +100,11 @@
 
       var app = Elm.Main.init({
         node: document.querySelector("main"),
-        flags: JSON.parse(localStorage.getItem("history") || [])
+        flags: JSON.parse(localStorage.getItem("history") || "[]"),
       });
 
-      app.ports.writeHistory.subscribe(function(message) {
-        localStorage.setItem("history", JSON.stringify(message))
+      app.ports.writeHistory.subscribe(function (message) {
+        localStorage.setItem("history", JSON.stringify(message));
       });
     </script>
   </body>
