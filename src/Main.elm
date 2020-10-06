@@ -316,6 +316,7 @@ type alias Model =
     , flash : String
     , history : List HistoryEntry
     , showNewGameModal : Bool
+    , gameOver : Bool
     }
 
 
@@ -329,6 +330,7 @@ initialModel =
     , reveal = False
     , history = []
     , showNewGameModal = False
+    , gameOver = False
     }
 
 
@@ -354,6 +356,7 @@ update msg model =
                 , guesses = initGuesses
                 , flash = "Welcome to Codebreaker!"
                 , reveal = False
+                , gameOver = False
                 , showNewGameModal = False
               }
             , Random.generate Roll roll
@@ -400,14 +403,14 @@ update msg model =
                         history =
                             [ { win = True, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
                     in
-                    ( { model | flash = "You win!", reveal = True, currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
+                    ( { model | flash = "You win!", gameOver = True, reveal = True, currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
                 ( False, True ) ->
                     let
                         history =
                             [ { win = False, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
                     in
-                    ( { model | flash = "You Lose", currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
+                    ( { model | flash = "You Lose", gameOver = True, currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
                 _ ->
                     ( { model | flash = feedbackToString feedback ++ currentRoundDisplay currentRound, currentRound = currentRound, guesses = newGuesses }, Cmd.none )
@@ -572,7 +575,16 @@ view model =
                     button [ attribute "disabled" "true" ] [ text "New Game" ]
 
                  else
-                    button [ onClick ShowNewGameModal ] [ text "New Game" ]
+                    button
+                        [ onClick
+                            (if model.gameOver then
+                                NewGame
+
+                             else
+                                ShowNewGameModal
+                            )
+                        ]
+                        [ text "New Game" ]
                , button [ onClick ClearHistory ] [ text "Clear History" ]
                , table []
                     [ tbody [ class "hint" ]
