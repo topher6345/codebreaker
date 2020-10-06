@@ -304,6 +304,7 @@ type alias HistoryEntry =
     { win : Bool
     , rounds : Int
     , pick : String
+    , cheat : Bool
     }
 
 
@@ -411,14 +412,14 @@ update msg model =
                 ( True, False ) ->
                     let
                         history =
-                            [ { win = True, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
+                            [ { win = True, rounds = currentRound, pick = rowToString model.pick, cheat = model.reveal } ] ++ model.history
                     in
                     ( { model | flash = "You win!", gameOver = True, reveal = True, currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
                 ( False, True ) ->
                     let
                         history =
-                            [ { win = False, rounds = currentRound, pick = rowToString model.pick } ] ++ model.history
+                            [ { win = False, rounds = currentRound, pick = rowToString model.pick, cheat = model.reveal } ] ++ model.history
                     in
                     ( { model | flash = "You Lose", gameOver = True, currentRound = currentRound, guesses = newGuesses, history = history }, writeHistory (encode history) )
 
@@ -678,14 +679,18 @@ view model =
         ]
 
 
-showHistory { win, rounds, pick } =
+showHistory { win, rounds, pick, cheat } =
     let
         message =
-            if win then
-                "You won in "
+            case ( win, cheat ) of
+                ( True, True ) ->
+                    "You cheated in "
 
-            else
-                "You lost in "
+                ( True, False ) ->
+                    "You won in "
+
+                ( False, _ ) ->
+                    "You lost in "
     in
     message ++ String.fromInt rounds ++ " rounds. " ++ pick
 
@@ -707,6 +712,7 @@ encode history =
                 [ ( "win", E.bool h.win )
                 , ( "rounds", E.int h.rounds )
                 , ( "pick", E.string h.pick )
+                , ( "cheat", E.bool h.cheat )
                 ]
         )
         history
@@ -715,10 +721,11 @@ encode history =
 decoder : D.Decoder (Array HistoryEntry)
 decoder =
     D.array <|
-        D.map3 HistoryEntry
+        D.map4 HistoryEntry
             (D.field "win" D.bool)
             (D.field "rounds" D.int)
             (D.field "pick" D.string)
+            (D.field "cheat" D.bool)
 
 
 init : E.Value -> ( Model, Cmd Msg )
