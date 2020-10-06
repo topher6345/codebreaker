@@ -83,6 +83,10 @@
         font-size: 1em;
       }
 
+      button:hover {
+        background-color: #888;
+      }
+
       .root > table {
         padding: 0.5em;
       }
@@ -98,7 +102,7 @@
         return "";
       });
 
-      const historyKey = "codbreaker:history"
+      const historyKey = "codbreaker:history";
 
       var app = Elm.Main.init({
         node: document.querySelector("main"),
