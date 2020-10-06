@@ -2704,7 +2704,7 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		A: func(record.A),
+		B: func(record.B),
 		am: record.am,
 		ai: record.ai
 	}
@@ -2974,7 +2974,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.A;
+		var message = !tag ? value : tag < 3 ? value.a : value.B;
 		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.am;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
@@ -5227,7 +5227,7 @@ var $author$project$Main$Roll = function (a) {
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $author$project$Main$HistoryEntry = F4(
 	function (win, rounds, pick, cheat) {
-		return {P: cheat, g: pick, V: rounds, _: win};
+		return {P: cheat, h: pick, V: rounds, _: win};
 	});
 var $elm$json$Json$Decode$array = _Json_decodeArray;
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
@@ -5348,7 +5348,7 @@ var $author$project$Main$Row = F4(
 	});
 var $author$project$Main$None = 6;
 var $author$project$Main$blankRow = A4($author$project$Main$Row, 6, 6, 6, 6);
-var $author$project$Main$initFeedback = {Q: 0, H: 0, R: 4};
+var $author$project$Main$initFeedback = {Q: 0, I: 0, R: 4};
 var $author$project$Main$initGuess = _Utils_Tuple2($author$project$Main$initFeedback, $author$project$Main$blankRow);
 var $elm$core$Array$repeat = F2(
 	function (n, e) {
@@ -5362,11 +5362,11 @@ var $elm$core$Array$repeat = F2(
 var $author$project$Main$initGuesses = A2($elm$core$Array$repeat, 8, $author$project$Main$initGuess);
 var $author$project$Main$initialModel = {
 	k: 0,
-	z: 'Welcome to Codebreaker!',
-	J: false,
+	A: 'Welcome to Codebreaker!',
+	t: false,
 	b: $author$project$Main$initGuesses,
-	v: _List_Nil,
-	g: A4($author$project$Main$Row, 0, 0, 0, 0),
+	w: _List_Nil,
+	h: A4($author$project$Main$Row, 0, 0, 0, 0),
 	r: false,
 	aj: $author$project$Main$blankRow,
 	K: false,
@@ -5498,14 +5498,14 @@ var $author$project$Main$init = function (flags) {
 				return _Utils_update(
 					$author$project$Main$initialModel,
 					{
-						v: $elm$core$Array$toList(history)
+						w: $elm$core$Array$toList(history)
 					});
 			} else {
 				var message = _v0.a;
 				return _Utils_update(
 					$author$project$Main$initialModel,
 					{
-						z: 'Error loading history: ' + $elm$json$Json$Decode$errorToString(message)
+						A: 'Error loading history: ' + $elm$json$Json$Decode$errorToString(message)
 					});
 			}
 		}(),
@@ -5559,7 +5559,7 @@ var $author$project$Main$encode = function (history) {
 						$elm$json$Json$Encode$int(h.V)),
 						_Utils_Tuple2(
 						'pick',
-						$elm$json$Json$Encode$string(h.g)),
+						$elm$json$Json$Encode$string(h.h)),
 						_Utils_Tuple2(
 						'cheat',
 						$elm$json$Json$Encode$bool(h.P))
@@ -5568,7 +5568,7 @@ var $author$project$Main$encode = function (history) {
 		history);
 };
 var $author$project$Main$feedbackToString = function (_v0) {
-	var correctColorPosition = _v0.H;
+	var correctColorPosition = _v0.I;
 	var correctColor = _v0.Q;
 	var empty = _v0.R;
 	return $elm$core$String$fromInt(correctColorPosition) + (' Bulls, ' + ($elm$core$String$fromInt(correctColor) + ' Cows, '));
@@ -5758,7 +5758,7 @@ var $author$project$Main$mkFeedback = F2(
 		var a = _v1.a;
 		var b = _v1.b;
 		var colorCount = A3($author$project$Main$detectCorrectColor, a, b, 0);
-		return {Q: colorCount, H: corrects, R: (4 - corrects) - colorCount};
+		return {Q: colorCount, I: corrects, R: (4 - corrects) - colorCount};
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -5917,10 +5917,10 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							k: 0,
-							z: 'Welcome to Codebreaker!',
-							J: false,
+							A: 'Welcome to Codebreaker!',
+							t: false,
 							b: $author$project$Main$initGuesses,
-							g: A4($author$project$Main$Row, 0, 0, 0, 0),
+							h: A4($author$project$Main$Row, 0, 0, 0, 0),
 							r: false,
 							aj: $author$project$Main$blankRow,
 							L: false
@@ -5970,7 +5970,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{g: pick}),
+						{h: pick}),
 					$elm$core$Platform$Cmd$none);
 			case 2:
 				var index = model.k;
@@ -5980,13 +5980,13 @@ var $author$project$Main$update = F2(
 					$author$project$Main$initGuess,
 					A2($elm$core$Array$get, index, model.b));
 				var row = _v1.b;
-				var feedback = A2($author$project$Main$mkFeedback, row, model.g);
+				var feedback = A2($author$project$Main$mkFeedback, row, model.h);
 				var newGuesses = A3(
 					$elm$core$Array$set,
 					index,
 					_Utils_Tuple2(feedback, row),
 					model.b);
-				var _v2 = _Utils_Tuple2(feedback.H === 4, currentRound > 8);
+				var _v2 = _Utils_Tuple2(feedback.I === 4, currentRound > 8);
 				_v2$2:
 				while (true) {
 					if (_v2.a) {
@@ -5996,16 +5996,16 @@ var $author$project$Main$update = F2(
 									[
 										{
 										P: model.r,
-										g: $author$project$Main$rowToString(model.g),
+										h: $author$project$Main$rowToString(model.h),
 										V: currentRound,
 										_: true
 									}
 									]),
-								model.v);
+								model.w);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{k: currentRound, z: 'You win!', J: true, b: newGuesses, v: history, r: true}),
+									{k: currentRound, A: 'You win!', t: true, b: newGuesses, w: history, r: true}),
 								$author$project$Main$writeHistory(
 									$author$project$Main$encode(history)));
 						} else {
@@ -6018,16 +6018,16 @@ var $author$project$Main$update = F2(
 									[
 										{
 										P: model.r,
-										g: $author$project$Main$rowToString(model.g),
+										h: $author$project$Main$rowToString(model.h),
 										V: currentRound,
 										_: false
 									}
 									]),
-								model.v);
+								model.w);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{k: currentRound, z: 'You Lose', J: true, b: newGuesses, v: history}),
+									{k: currentRound, A: 'You Lose', t: true, b: newGuesses, w: history}),
 								$author$project$Main$writeHistory(
 									$author$project$Main$encode(history)));
 						} else {
@@ -6040,7 +6040,7 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							k: currentRound,
-							z: _Utils_ap(
+							A: _Utils_ap(
 								$author$project$Main$feedbackToString(feedback),
 								$author$project$Main$currentRoundDisplay(currentRound)),
 							b: newGuesses
@@ -6056,7 +6056,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{v: _List_Nil, K: false}),
+						{w: _List_Nil, K: false}),
 					$author$project$Main$writeHistory(
 						$author$project$Main$encode(_List_Nil)));
 		}
@@ -6306,8 +6306,8 @@ var $author$project$Main$choice = F4(
 				]));
 	});
 var $elm$html$Html$td = _VirtualDom_node('td');
-var $author$project$Main$guessesTds = F3(
-	function (rowIndex, currentRound, guesses) {
+var $author$project$Main$guessesTds = F4(
+	function (rowIndex, currentRound, guesses, gameOver) {
 		var mkTd = function (index) {
 			return A2(
 				$elm$html$Html$td,
@@ -6318,7 +6318,7 @@ var $author$project$Main$guessesTds = F3(
 						$author$project$Main$choice,
 						guesses,
 						rowIndex,
-						!_Utils_eq(currentRound, index),
+						(!_Utils_eq(currentRound, index)) || gameOver,
 						index)
 					]));
 		};
@@ -6399,7 +6399,7 @@ var $elm$core$List$repeat = F2(
 		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
 	});
 var $author$project$Main$hintTableList = function (_v0) {
-	var correctColorPosition = _v0.H;
+	var correctColorPosition = _v0.I;
 	var correctColor = _v0.Q;
 	var empty = _v0.R;
 	var empties = A2($elm$core$List$repeat, empty, 2);
@@ -6637,7 +6637,7 @@ var $elm$html$Html$ol = _VirtualDom_node('ol');
 var $author$project$Main$showHistory = function (_v0) {
 	var win = _v0._;
 	var rounds = _v0.V;
-	var pick = _v0.g;
+	var pick = _v0.h;
 	var cheat = _v0.P;
 	var message = function () {
 		var _v1 = _Utils_Tuple2(win, cheat);
@@ -6676,7 +6676,7 @@ var $author$project$Main$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(model.z)
+						$elm$html$Html$text(model.A)
 					])),
 				_Utils_eq(model.b, $author$project$Main$initialModel.b) ? A2(
 				$elm$html$Html$button,
@@ -6692,7 +6692,7 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						model.J ? $author$project$Main$NewGame : $author$project$Main$ShowNewGameModal)
+						model.t ? $author$project$Main$NewGame : $author$project$Main$ShowNewGameModal)
 					]),
 				_List_fromArray(
 					[
@@ -6735,7 +6735,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Attributes$class('pick')
 									]),
 								_Utils_ap(
-									A3($author$project$Main$guessesTds, 0, model.k, model.b),
+									A4($author$project$Main$guessesTds, 0, model.k, model.b, model.t),
 									_List_fromArray(
 										[
 											A2(
@@ -6745,7 +6745,7 @@ var $author$project$Main$view = function (model) {
 												[
 													$elm$html$Html$text(
 													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.g, 0)))
+														A2($author$project$Main$getFromRow, model.h, 0)))
 												]) : _List_fromArray(
 												[
 													$elm$html$Html$text('❓')
@@ -6758,7 +6758,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Attributes$class('pick')
 									]),
 								_Utils_ap(
-									A3($author$project$Main$guessesTds, 1, model.k, model.b),
+									A4($author$project$Main$guessesTds, 1, model.k, model.b, model.t),
 									_List_fromArray(
 										[
 											A2(
@@ -6768,7 +6768,7 @@ var $author$project$Main$view = function (model) {
 												[
 													$elm$html$Html$text(
 													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.g, 1)))
+														A2($author$project$Main$getFromRow, model.h, 1)))
 												]) : _List_fromArray(
 												[
 													$elm$html$Html$text('❓')
@@ -6781,7 +6781,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Attributes$class('pick')
 									]),
 								_Utils_ap(
-									A3($author$project$Main$guessesTds, 2, model.k, model.b),
+									A4($author$project$Main$guessesTds, 2, model.k, model.b, model.t),
 									_List_fromArray(
 										[
 											A2(
@@ -6791,7 +6791,7 @@ var $author$project$Main$view = function (model) {
 												[
 													$elm$html$Html$text(
 													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.g, 2)))
+														A2($author$project$Main$getFromRow, model.h, 2)))
 												]) : _List_fromArray(
 												[
 													$elm$html$Html$text('❓')
@@ -6804,7 +6804,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Attributes$class('pick')
 									]),
 								_Utils_ap(
-									A3($author$project$Main$guessesTds, 3, model.k, model.b),
+									A4($author$project$Main$guessesTds, 3, model.k, model.b, model.t),
 									_List_fromArray(
 										[
 											A2(
@@ -6814,7 +6814,7 @@ var $author$project$Main$view = function (model) {
 												[
 													$elm$html$Html$text(
 													$author$project$Main$colorShow(
-														A2($author$project$Main$getFromRow, model.g, 3)))
+														A2($author$project$Main$getFromRow, model.h, 3)))
 												]) : _List_fromArray(
 												[
 													$elm$html$Html$text('❓')
@@ -6837,10 +6837,15 @@ var $author$project$Main$view = function (model) {
 												[
 													A2(
 													$elm$html$Html$button,
-													_List_fromArray(
-														[
-															$elm$html$Html$Events$onClick($author$project$Main$Cheat)
-														]),
+													_Utils_ap(
+														_List_fromArray(
+															[
+																$elm$html$Html$Events$onClick($author$project$Main$Cheat)
+															]),
+														model.r ? _List_fromArray(
+															[
+																A2($elm$html$Html$Attributes$attribute, 'disabled', 'true')
+															]) : _List_Nil),
 													_List_fromArray(
 														[
 															$elm$html$Html$text('cheat')
@@ -6864,7 +6869,7 @@ var $author$project$Main$view = function (model) {
 									$author$project$Main$showHistory(historyEntry))
 								]));
 					},
-					model.v))
+					model.w))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

@@ -520,11 +520,11 @@ hintsTr guesses =
     tr [] (List.range 0 7 |> List.map mkTd)
 
 
-guessesTds : RowIndex -> Int -> Array Guess -> List (Html Msg)
-guessesTds rowIndex currentRound guesses =
+guessesTds : RowIndex -> Int -> Array Guess -> Bool -> List (Html Msg)
+guessesTds rowIndex currentRound guesses gameOver =
     let
         mkTd index =
-            td [] [ choice guesses rowIndex (currentRound /= index) index ]
+            td [] [ choice guesses rowIndex (currentRound /= index || gameOver) index ]
     in
     List.range 0 7 |> List.map mkTd
 
@@ -539,19 +539,6 @@ mkSubmitRows guesses currentRound =
                 ]
     in
     List.range 0 7 |> List.map mkTd
-
-
-showGuess { currentRound, guesses, pick, reveal } rowIndex =
-    tr [] <|
-        guessesTds rowIndex currentRound guesses
-            ++ [ td []
-                    (if reveal then
-                        [ text <| colorShow <| getFromRow pick rowIndex ]
-
-                     else
-                        []
-                    )
-               ]
 
 
 newGameConfirmModal showNewGameModal =
@@ -627,7 +614,7 @@ view model =
                 [ hintsTr model.guesses ]
             , tbody []
                 [ tr [ class "pick" ] <|
-                    guessesTds First model.currentRound model.guesses
+                    guessesTds First model.currentRound model.guesses model.gameOver
                         ++ [ td []
                                 (if model.reveal then
                                     [ text <| colorShow <| getFromRow model.pick First ]
@@ -637,7 +624,7 @@ view model =
                                 )
                            ]
                 , tr [ class "pick" ] <|
-                    guessesTds Second model.currentRound model.guesses
+                    guessesTds Second model.currentRound model.guesses model.gameOver
                         ++ [ td []
                                 (if model.reveal then
                                     [ text <| colorShow <| getFromRow model.pick Second ]
@@ -647,7 +634,7 @@ view model =
                                 )
                            ]
                 , tr [ class "pick" ] <|
-                    guessesTds Third model.currentRound model.guesses
+                    guessesTds Third model.currentRound model.guesses model.gameOver
                         ++ [ td []
                                 (if model.reveal then
                                     [ text <| colorShow <| getFromRow model.pick Third ]
@@ -657,7 +644,7 @@ view model =
                                 )
                            ]
                 , tr [ class "pick" ] <|
-                    guessesTds Fourth model.currentRound model.guesses
+                    guessesTds Fourth model.currentRound model.guesses model.gameOver
                         ++ [ td []
                                 (if model.reveal then
                                     [ text <| colorShow <| getFromRow model.pick Fourth ]
@@ -668,7 +655,18 @@ view model =
                            ]
                 , tr [ class "pick" ] <|
                     mkSubmitRows model.guesses model.currentRound
-                        ++ [ td [] [ button [ onClick Cheat ] [ text "cheat" ] ]
+                        ++ [ td []
+                                [ button
+                                    ([ onClick Cheat ]
+                                        ++ (if model.reveal then
+                                                [ attribute "disabled" "true" ]
+
+                                            else
+                                                []
+                                           )
+                                    )
+                                    [ text "cheat" ]
+                                ]
                            ]
                 ]
             ]
